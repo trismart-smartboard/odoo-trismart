@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="usa_journal_kanban_view" model="ir.ui.view">
+        <field name="name">usa.journal.kanban</field>
+        <field name="model">usa.journal</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    class="oe_background_grey o_kanban_dashboard o_account_kanban o_account_dashboard_kanban"
+                    js_class="usa_kpi">
+                <field name="id"/>
+                <field name="type"/>
+                <field name="extend_data"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)}">
+                            <t t-value="record.type.raw_value" t-set="type"/>
+                            <t t-value="record.extend_data.raw_value" t-set="extend_data"/>
+                            <t t-call="JournalTop"/>
+                            <div class="container o_kanban_card_content">
+                                <t t-if="type  == 'profit_and_loss' || type == 'invoice' || type == 'cash' || type == 'cash_forecast'" t-call="JournalGraph"/>
+                            </div>
+                            <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                <t t-call="JournalManage"/>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-name="JournalTop">
+                        <div t-attf-class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary">
+                                    <a type="object" name="open_action_label">
+                                        <field name="name"/>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="o_kanban_manage_button_section">
+                                <a class="o_kanban_manage_toggle_button" href="#">
+                                    <i class="fa fa-ellipsis-v"
+                                       aria-label="Selection"
+                                       role="img"
+                                       title="Selection"/>
+                                </a>
+                            </div>
+                            <!--</t>-->
+                        </div>
+                    </t>
+                    <t t-name="JournalGraph">
+                         <t t-name="JournalExtendButton" id="account_dashboard.JournalExtendButton">
+                        </t>
+                        <t t-if="type == 'cash_forecast'">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="object"  name="action_recurring_amount"
+                                        class="btn btn-primary pull-right">
+                                        <span>Update Recurring Monthly Amount</span>
+                                     </button>
+                                </div>
+                            </div>
+                        </t>
+                        <field name="account_dashboard_graph_json"
+                               widget="journal_data"/>
+                    </t>
+                    <t t-name="JournalManage">
+                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                            <div class="col-8">
+                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="open_usa_journal_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Company Insight</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">usa.journal</field>
+        <field name="view_mode">kanban</field>
+    </record>
+
+    <menuitem id="menu_account_dashboard"
+              name="Company Insight"
+              action="open_usa_journal_dashboard_kanban"
+              parent="account.account_reports_management_menu"
+              sequence="0"
+              groups="account.group_account_user"/>
+</odoo>

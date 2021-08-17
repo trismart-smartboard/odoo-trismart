@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_form_inherit_usa" model="ir.ui.view">
+        <field name="name">view.account.form.inherit.usa</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <field name="deprecated" position="after">
+                <field name="account_eligible_1099" attrs="{'invisible': [('reconcile', '=', True)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_account_list_inherit_usa" model="ir.ui.view">
+        <field name="name">account.account.list.inherit.usa</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+            <field name="reconcile" position="after">
+                <field name="account_eligible_1099" attrs="{'invisible': [('reconcile', '=', True)]}" widget="boolean_toggle"/>
+            </field>
+        </field>
+    </record>
+</odoo>

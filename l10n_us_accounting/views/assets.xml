@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="l10n_us_accounting.assets_backend_usa" name="Backend Assets USA" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <!-- SCSS -->
+            <link rel="stylesheet" type="text/scss" href="/l10n_us_accounting/static/src/scss/account_followup_report.scss"/>
+            <link rel="stylesheet" type="text/scss" href="/l10n_us_accounting/static/src/scss/account_reconciliation.scss"/>
+            <link rel="stylesheet" type="text/scss" href="/l10n_us_accounting/static/src/scss/table_sorter.scss"/>
+        </xpath>
+        <xpath expr="//script[last()]" position="after">
+            <!-- JAVASCRIPT -->
+            <!-- Override Account Reconciliation -->
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/reconciliation/manual_reconciliation_renderer.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/reconciliation/reconciliation_renderer.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/reconciliation/reconciliation_model.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/reconciliation/reconciliation_action.js"/>
+
+            <!-- Account Report - Bank Reconciliation -->
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/account_report/jquery.tablesorter.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/account_report/usa_bank_reconciliation.js"/>
+
+            <!--MISC-->
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/dialog.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/search_by_amount_filter.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/account_payment_field.js"/>
+            <script type="text/javascript" src="/l10n_us_accounting/static/src/js/usa_1099_report.js"/>
+        </xpath>
+    </template>
+
+    <!--Add asset to print followup report -->
+    <template id="usa_assets_followup_report" inherit_id="account_followup.assets_followup_report">
+        <xpath expr="link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/l10n_us_accounting/static/src/scss/account_followup_report.scss"/>
+        </xpath>
+    </template>
+</odoo>

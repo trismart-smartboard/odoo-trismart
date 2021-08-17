@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_location_form_inherit_usa" model="ir.ui.view">
+            <field name="name">stock.location.form.inherit</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="after">
+                    <div class="oe_chatter">
+                        <field name="activity_ids"/>
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="l10n_common.assets_backend_common" name="Backend Assets Common" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/scss" href="/l10n_common/static/src/scss/usa_account_report.scss"/>
+            <script type="text/javascript" src="/l10n_common/static/src/js/list_view.js"/>
+        </xpath>
+    </template>
+</odoo>

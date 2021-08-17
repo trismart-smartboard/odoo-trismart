@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--KPI default show-->
+        <record id="profit_margin" model="kpi.journal">
+            <field name="name">Profit margin</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="0"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/profit_margin.png"/>
+            <field name="unit">percentage</field>
+            <field name="color">#F06050</field>
+            <field name="default_kpi" eval="True"/>
+            <field name="green_on_positive">True</field>
+            <field name="code_compute">
+gross_profit = model.get_group_in_period('account_reports.account_financial_report_gross_profit0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+operating_income = model.get_group_in_period('account_reports.account_financial_report_income0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+result = 0 if operating_income == 0 else 100 * (gross_profit/ operating_income)
+            </field>
+        </record>
+
+        <record id="net_profit_loss" model="kpi.journal">
+            <field name="name">Net Profit/Loss</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="1"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/net_profit_loss.png"/>
+            <field name="default_kpi" eval="True"/>
+            <field name="color">#F4A460</field>
+            <field name="green_on_positive">True</field>
+            <field name="code_compute">
+net_profit_loss = model.get_group_in_period('account_reports.account_financial_report_net_profit0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+result = net_profit_loss
+            </field>
+        </record>
+
+        <record id="total_income" model="kpi.journal">
+            <field name="name">Total Income</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="2"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/total_income.png"/>
+            <field name="default_kpi" eval="True"/>
+            <field name="color">#F7CD1F</field>
+            <field name="green_on_positive">True</field>
+            <field name="code_compute">
+other_income = model.get_group_in_period('account_reports.account_financial_report_other_income0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+operating_income = model.get_group_in_period('account_reports.account_financial_report_income0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+result = other_income + operating_income
+            </field>
+        </record>
+
+        <record id="total_expenses" model="kpi.journal">
+            <field name="name">Total Expenses</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="3"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/expenses.png"/>
+            <field name="default_kpi" eval="True"/>
+            <field name="color">#6CC1ED</field>
+            <field name="green_on_positive">False</field>
+            <field name="code_compute">
+other_income = model.get_group_in_period('account_reports.account_financial_report_other_income0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+operating_income = model.get_group_in_period('account_reports.account_financial_report_income0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+total_income = other_income + operating_income
+net_profit_loss = model.get_group_in_period('account_reports.account_financial_report_net_profit0', 'account_reports.account_financial_report_profitandloss0', date_from, date_to, lines_dict)
+result = total_income - net_profit_loss
+            </field>
+        </record>
+
+        <record id="total_cash_cash_equivalent" model="kpi.journal">
+            <field name="name">Total Cash and Cash Equivalent</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="4"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/cash_and_equivalent.png"/>
+            <field name="default_kpi" eval="True"/>
+            <field name="color">#814968</field>
+            <field name="green_on_positive">True</field>
+            <field name="code_compute">
+bank_and_cash = model.get_group_in_period('account_reports.account_financial_report_bank_view0', 'account_reports.account_financial_report_balancesheet0', date_from, date_to, lines_dict)
+result = bank_and_cash
+            </field>
+        </record>
+
+        <record id="total_receivables" model="kpi.journal">
+            <field name="name">Total Receivables</field>
+            <field name="selected" eval="True"/>
+            <field name="data" eval=""/>
+            <field name="order" eval="5"/>
+            <field name="icon_kpi" type="base64" file="account_dashboard/static/src/img/receivables.png"/>
+            <field name="default_kpi" eval="True"/>
+            <field name="color">#EB7E7F</field>
+            <field name="green_on_positive">True</field>
+            <field name="code_compute">
+receivables = model.get_group_in_period('account_reports.account_financial_report_receivable0', 'account_reports.account_financial_report_balancesheet0', date_from, date_to, lines_dict)
+result = receivables
+            </field>
+        </record>
+    </data>
+</odoo>

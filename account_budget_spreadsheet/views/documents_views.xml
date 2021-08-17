@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherited_document_view_kanban" model="ir.ui.view">
+        <field name="name">inherited_document_view_kanban</field>
+        <field name="model">documents.document</field>
+        <field name="inherit_id" ref="documents.document_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_kanban_record_title')]" position="inside">
+                <div>
+                    <field name="period_type" class="o_text_overflow"/>
+                </div>
+                <div>
+                    <field name="report_type" class="o_text_overflow"/>
+                </div>
+                <div>
+                    <field name="analytic_account_id" class="o_text_overflow"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="budget_view_list" model="ir.ui.view">
+        <field name="name">budget_view_list</field>
+        <field name="model">documents.document</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <tree js_class="budget_spreadsheet_list" create="0">
+                <field name="name" string="Document" required="True"/>
+                <field name="report_type"/>
+                <field name="period_type"/>
+                <field name="analytic_account_id"/>
+                <field name="year"/>
+                <field name="create_date" widget="date"/>
+                <button string="Open budget" class="float-right open_budget" name="open_budget" icon="fa-pencil"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_budget_spreadsheet" model="ir.actions.act_window">
+        <field name="name">Budget Spreadsheet Reports</field>
+        <field name="res_model">documents.document</field>
+        <field name="view_mode">tree,kanban</field>
+        <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('account_budget_spreadsheet.budget_view_list')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('account_budget_spreadsheet.inherited_document_view_kanban')})
+        ]"/>
+        <field name="domain" eval="[('is_budget_spreadsheet', '=', True)]"/>
+    </record>
+    <menuitem action="action_budget_spreadsheet"
+              id="menu_budget_spreadsheet"
+              name="Budget Spreadsheet Report"
+              parent="account.menu_finance_entries_management" sequence="26"/>
+
+</odoo>

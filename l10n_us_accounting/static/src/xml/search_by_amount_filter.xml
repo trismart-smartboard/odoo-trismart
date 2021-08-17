@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-inherit="web.FilterMenu" t-inherit-mode="extension">
+        <xpath expr="//t[@t-foreach='items']" position="before">
+            <SearchByAmountFilter fields="props.fields"/>
+        </xpath>
+    </t>
+
+    <t t-name="l10n_us_accounting.SearchByAmountFilter" owl="1">
+        <div class="search_by_amount_filter d-none" t-ref="search_by_amount_filter">
+            <div class="o_generator_menu">
+                <button type="button"
+                        class="dropdown-item o_add_search_by_amount_filter o_closed_menu_amount"
+                        aria-expanded="false"
+                        t-on-click="state.open = !state.open"
+                >
+                    <t t-esc="modelContext.titleDisplay"/>
+                </button>
+                <div class="o_add_filter_menu_amount dropdown-item-text o_filter_condition" t-if="state.open">
+                    <input id="min_val" class="o_input" pattern="[0-9]+([\.][0-9]+)?" step="0.01" value="0.0"
+                           placeholder="Min value" type="number" t-ref="min_val"/>
+                    <input id="max_val" class="o_input" pattern="[0-9]+([\.][0-9]+)?" step="0.01" value="0.0"
+                           placeholder="Max value" type="number" t-ref="max_val"/>
+                    <button class="btn btn-primary o_apply_search_by_amount_filter" type="button" style="margin-top:10px;"
+                            t-on-click="_onApplyAmountFilter">
+                        Apply
+                    </button>
+                </div>
+            </div>
+            <li class="dropdown-divider" role="separator"/>
+        </div>
+    </t>
+</templates>
