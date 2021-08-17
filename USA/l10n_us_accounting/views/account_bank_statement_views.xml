@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--BANK STATEMENT-->
+    <record id="view_bank_statement_form_usa" model="ir.ui.view">
+        <field name="name">view_bank_statement_form_usa</field>
+        <field name="model">account.bank.statement</field>
+        <field name="inherit_id" ref="account.view_bank_statement_form"/>
+        <field name="arch" type="xml">
+            <!--BANK STATEMENT LINES section-->
+            <xpath expr="//notebook/page/field/tree" position="inside">
+                <field name="status" invisible="1"/>
+            </xpath>
+
+            <!-- Colorize bank statement lines (Open - Black, Reviewed - Green, Reconciled - Gray, Excluded - Red) -->
+            <xpath expr="//notebook/page/field/tree" position="attributes">
+                <attribute name="decoration-muted">status == 'reconciled'</attribute>
+                <attribute name="decoration-info">status == 'confirm'</attribute>
+                <attribute name="decoration-danger">status == 'excluded'</attribute>
+            </xpath>
+
+            <!-- Hide button to undo reconciliation of Odoo -->
+            <button name="button_undo_reconciliation" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </button>
+
+            <!-- Add button to undo review/exclude bank statement line -->
+            <button name="button_undo_reconciliation" position="after">
+                <button name="button_undo_review" attrs="{'invisible': [('status', '!=', 'confirm')]}" string="Undo Review"
+                        type="object" icon="fa-undo" class="pl-3 text-primary align-baseline"
+                        confirm="Do you want to undo action applied on this bank statement line?"/>
+                <button name="button_undo_exclude" attrs="{'invisible': [('status', '!=', 'excluded')]}" string="Undo Exclude"
+                        type="object" icon="fa-undo" class="pl-3 text-danger align-baseline"
+                        confirm="Do you want to undo action applied on this bank statement line?"/>
+            </button>
+        </field>
+    </record>
+
+    <record id="view_bank_statement_form_accountant_usa" model="ir.ui.view">
+        <field name="name">view_bank_statement_form_accountant_usa</field>
+        <field name="model">account.bank.statement</field>
+        <field name="inherit_id" ref="account_accountant.view_bank_statement_form"/>
+        <field name="arch" type="xml">
+            <button name="action_bank_reconcile_bank_statements" position="attributes">
+                <attribute name="string">Review</attribute>
+            </button>
+        </field>
+    </record>
+
+    <!--BANK STATEMENT LINE-->
+    <record id="view_bank_statement_line_form_usa" model="ir.ui.view">
+        <field name="name">view_bank_statement_line_form_usa</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_action_review" type="object" class="btn btn-primary" string="Review"
+                            attrs="{'invisible': [('status', '!=', 'open')]}"/>
+                    <button name="button_undo_review" type="object" string="Undo Review"
+                            attrs="{'invisible': [('status', '!=', 'confirm')]}"
+                            confirm="Do you want to undo action applied on this bank statement line?"/>
+                    <button name="button_undo_exclude" type="object" string="Undo Exclude"
+                            attrs="{'invisible': [('status', '!=', 'excluded')]}"
+                            confirm="Do you want to undo action applied on this bank statement line?"/>
+                    <field name="status" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="matched_journal_entry_ids" invisible="1"/>
+                        <button name="action_open_matched_journal_entries" type="object" class="oe_stat_button"
+                                attrs="{'invisible': [('matched_journal_entry_ids', '=', [])]}"
+                                icon="fa-bars" string="Matched Journal Entries"/>
+                    </div>
+                    <group name="top">
+                        <group name="left">
+                            <field name="statement_id" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group name="bottom" readonly="1">
+                        <group name="left">
+                            <field name="payment_ref" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                            <field name="partner_id" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                            <field name="ref" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                            <field name="narration" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                        </group>
+                        <group name="right">
+                            <field name="date" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                            <field name="amount" attrs="{'readonly': [('status', 'in', ['confirm', 'reconciled'])]}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_statement_line_tree_usa" model="ir.ui.view">
+        <field name="name">view_bank_statement_line_tree_usa</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
+        <field name="arch" type="xml">
+            <!-- Hide button to undo reconciliation of Odoo -->
+            <button name="button_undo_reconciliation" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </button>
+
+            <!-- Add button to undo review/exclude bank statement line -->
+            <button name="button_undo_reconciliation" position="after">
+                <field name="status" invisible="1"/>
+                <button name="button_undo_review" attrs="{'invisible': [('status', '!=', 'confirm')]}" string="Undo Review"
+                        type="object" icon="fa-undo" class="pl-3 text-primary align-baseline"
+                        confirm="Do you want to undo action applied on this bank statement line?"/>
+                <button name="button_undo_exclude" attrs="{'invisible': [('status', '!=', 'excluded')]}" string="Undo Exclude"
+                        type="object" icon="fa-undo" class="pl-3 text-danger align-baseline"
+                        confirm="Do you want to undo action applied on this bank statement line?"/>
+            </button>
+        </field>
+    </record>
+
+    <!--ACTION SERVER-->
+    <record id="action_bank_statement_line_undo_exclude" model="ir.actions.server">
+        <field name="name">Undo Exclude</field>
+        <field name="model_id" ref="l10n_us_accounting.model_account_bank_statement_line"/>
+        <field name="binding_model_id" ref="l10n_us_accounting.model_account_bank_statement_line"/>
+        <field name="state">code</field>
+        <field name="code">records.button_undo_exclude()</field>
+    </record>
+
+    <record id="action_bank_statement_line_undo_review" model="ir.actions.server">
+        <field name="name">Undo Review</field>
+        <field name="model_id" ref="l10n_us_accounting.model_account_bank_statement_line"/>
+        <field name="binding_model_id" ref="l10n_us_accounting.model_account_bank_statement_line"/>
+        <field name="state">code</field>
+        <field name="code">records.button_undo_review()</field>
+    </record>
+</odoo>

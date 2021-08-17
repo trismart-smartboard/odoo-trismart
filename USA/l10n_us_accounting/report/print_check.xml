@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="ckus_check_usa" name="l10n us accounting ckus_check"
+                  inherit_id="l10n_us_check_printing.ckus_check">
+            <!--Print Check As-->
+            <xpath expr="//div[hasclass('ckus_payee_addr')]" position="attributes">
+                <attribute name="t-options">{"widget": "contact", "fields": ["address", "check_name"], "no_marker": True}</attribute>
+            </xpath>
+        </template>
+    </data>
+</odoo>

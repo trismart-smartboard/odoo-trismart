@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_bank_journal_form_usa" model="ir.ui.view">
+        <field name="name">account.bank.journal.form</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <field name="type" position="after">
+                <field name="is_credit_card" attrs="{'invisible': [('type', '!=', 'bank')]}"/>
+                <field name="partner_id" domain="[('supplier_rank', '>', 0)]"
+                       context="{'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_company_type': 'company'}"
+                       attrs="{'invisible': [('is_credit_card', '=', False)], 'required': [('is_credit_card', '=', True)]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

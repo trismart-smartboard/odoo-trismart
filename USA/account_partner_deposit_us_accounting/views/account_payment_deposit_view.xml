@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_payment_deposit_form" model="ir.ui.view">
+        <field name="name">view_account_payment_deposit_form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account_partner_deposit.view_account_payment_deposit_form"/>
+        <field name="arch" type="xml">
+             <!--Hide Sales/Purchases Receipt checkbox-->
+            <field name="is_payment_receipt" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <label id="is_payment_receipt_for_customer" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </label>
+            <label id="is_payment_receipt_for_vendor" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </label>
+            <field name="expense_account" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="income_account" position="attributes">
+                 <attribute name="invisible">1</attribute>
+            </field>
+
+            <!--Hide Open Transactions section-->
+            <notebook name="open_trans" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </notebook>
+            <notebook name="applied_trans" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </notebook>
+            <group name="payment_total" position="attributes">
+                 <attribute name="invisible">1</attribute>
+            </group>
+            <field name="date" position="before">
+                <field name="amount" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

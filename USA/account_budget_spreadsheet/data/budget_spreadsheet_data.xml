@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo noupdate="0">
+    <!--    System Parameter Data-->
+    <record id="number_of_line_per_section_in_sheet" model="ir.config_parameter">
+        <field name="key">account_budget_spreadsheet.no_of_lines</field>
+        <field name="value">50</field>
+    </record>
+</odoo>
