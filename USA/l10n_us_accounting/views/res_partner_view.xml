@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_tree_usa_accounting" model="ir.ui.view">
+        <field name="name">res.partner.tree.usa.accounting</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="before">
+                <field name="ar_in_charge" invisible="not context.get('search_default_customer',False)"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_partner_property_form_usa" model="ir.ui.view">
+        <field name="name">res.partner.property.form.inherit.usa</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_account_payable_id" position="after">
+                <field name="usa_partner_type" invisible="1" readonly="1"/>
+                <field name="ar_in_charge" attrs="{'invisible': [('usa_partner_type', 'not in', ['customer', 'both'])]}"/>
+            </field>
+            <field name="category_id" position="before">
+                <field name="usa_partner_type" invisible="1"/>
+                <field name="supplier_rank" invisible="1"/>
+                <field name="vendor_eligible_1099" attrs="{'invisible': [('supplier_rank', '&lt;', 1)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_partner_form_usa" model="ir.ui.view">
+        <field name="name">res.partner.form.usa</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="type" position="before">
+                <field name="print_check_as"/>
+                <field name="check_name" attrs="{'invisible': [('print_check_as', '=', False)],
+                'required': [('print_check_as', '=', True)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <!--Override action window to modify context to show Search By Amount Filter in tree views of partner-->
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="context">{
+            'search_default_customer': 1,
+            'res_partner_search_mode': 'customer',
+            'default_is_company': True,
+            'default_customer_rank': 1,
+            'titleDisplay': 'Search by Total Balance',
+            'compareField': 'credit',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="context">{
+            'search_default_supplier': 1,
+            'res_partner_search_mode': 'supplier',
+            'default_is_company': True,
+            'default_supplier_rank': 1,
+            'titleDisplay': 'Search by Total Balance',
+            'compareField': 'debit',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+</odoo>

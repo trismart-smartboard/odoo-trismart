@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <!-- BANK RECONCILIATION FORM -->
+    <t t-extend="reconciliation.line">
+        <!-- Add column Date to header of table -->
+        <t t-jquery=".accounting_view thead tr" t-operation="before">
+            <tr class="header">
+                <td sort_type="number" sort_mode="" class="sort">Account <span class="sort_icon"/></td>
+                <td sort_type="date" sort_mode="" class="sort">Date <span class="sort_icon"/></td>
+                <td sort_type="date" sort_mode="" class="sort">Due Date <span class="sort_icon"/></td>
+                <td sort_type="text" sort_mode="" class="sort">Transaction <span class="sort_icon"/></td>
+                <td sort_type="currency" sort_mode="" class="sort text-right">Deposit <span class="sort_icon"/></td>
+                <td sort_type="currency" sort_mode="" class="sort text-right">Payment <span class="sort_icon"/></td>
+                <td/>
+            </tr>
+        </t>
+        <t t-jquery=".accounting_view thead tr td.cell_due_date" t-operation="before">
+            <td class="cell_date"><t t-esc="state.st_line.date"/></td>
+        </t>
+
+        <!--Add applying reconciliation model name-->
+        <t t-jquery="table.accounting_view" t-operation="after">
+            <div class="reconciliation_model_name">Bank Rule: <span/></div>
+        </t>
+
+        <!-- Rename button 'Validate' to 'Apply' + add Exclude button-->
+        <t t-jquery="caption .o_buttons" t-operation="replace">
+            <div class="float-right d-inline o_exclude_button">
+                <button class="btn btn-secondary o_exclude">Exclude</button>
+            </div>
+            <div class="float-right o_buttons">
+                <button t-attf-class="o_no_valid btn btn-secondary #{state.balance.type &lt; 0 ? '' : 'd-none'}"
+                        disabled="disabled" data-toggle="tooltip" title="Select a partner or choose a counterpart" accesskey="">Apply</button>
+                    <button t-attf-class="o_validate btn btn-secondary #{!state.balance.type ? '' : 'd-none'}">Apply</button>
+                    <button t-attf-class="o_reconcile btn btn-primary #{state.balance.type &gt; 0 ? '' : 'd-none'}">Apply</button>
+            </div>
+        </t>
+    </t>
+
+    <!-- Add column Date to suggested matching list. -->
+    <t t-extend="reconciliation.line.mv_line">
+        <t t-jquery="td.cell_due_date" t-operation="before">
+            <td class="cell_date">
+                <t t-if="typeof(line.id) != 'number' &amp;&amp; line.id">
+                    <span class="badge badge-secondary">New</span>
+                </t>
+                <t t-else="" t-esc="line.date"/>
+            </td>
+        </t>
+    </t>
+
+    <!-- Disable Edit amount feature -->
+    <t t-extend="reconciliation.line.mv_line.amount">
+        <t t-jquery="i.edit_amount" t-operation="replace"/>
+        <t t-jquery="input.edit_amount_input" t-operation="replace"/>
+    </t>
+
+    <!-- Add column Date to Balance line -->
+    <t t-extend="reconciliation.line.match">
+        <t t-jquery="table" t-operation="attributes">
+            <attribute name="class">table_sort</attribute>
+        </t>
+    </t>
+
+    <!-- Add column Date to Balance line -->
+    <t t-extend="reconciliation.line.balance">
+        <t t-jquery="td.cell_due_date" t-operation="before">
+            <td class="cell_date"/>
+        </t>
+    </t>
+
+    <!-- Add column Date to Batch payment -->
+    <t t-extend="batch.payment.tab">
+        <t t-jquery="table" t-operation="attributes">
+            <attribute name="class">table_sort</attribute>
+        </t>
+        <t t-jquery="td.cell_due_date" t-operation="before">
+            <td class="cell_date">
+                <t t-esc="batch.date"/>
+            </td>
+        </t>
+    </t>
+
+    <!-- MANUAL MATCHING FORM -->
+    <t t-extend="reconciliation.manual.line">
+        <t t-jquery='td[colspan*="3"]' t-operation="attributes">
+            <attribute name="colspan">4</attribute>
+        </t>
+        <t t-jquery='td[colspan*="2"]' t-operation="attributes">
+            <attribute name="class">text-center</attribute>
+        </t>
+
+        <t t-jquery=".accounting_view thead tr" t-operation="after">
+            <thead>
+                <tr class="header">
+                    <td sort_type="number" sort_mode="" class="sort">Account <span class="sort_icon"/></td>
+                    <td sort_type="date" sort_mode="" class="sort">Date <span class="sort_icon"/></td>
+                    <td sort_type="date" sort_mode="" class="sort">Due Date <span class="sort_icon"/></td>
+                    <td sort_type="text" sort_mode="" class="sort">Transaction <span class="sort_icon"/></td>
+                    <td sort_type="currency" sort_mode="" class="sort text-right cell_left">Deposit <span class="sort_icon"/></td>
+                    <td sort_type="currency" sort_mode="" class="sort text-right">Payment <span class="sort_icon"/></td>
+                    <td/>
+                </tr>
+            </thead>
+        </t>
+    </t>
+</templates>
+

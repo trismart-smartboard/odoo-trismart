@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_payment_form_usa" model="ir.ui.view">
+        <field name="name">account.payment.form.usa</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <button name="action_draft" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <button name="action_draft" position="after">
+                <button name="button_draft_usa" string="Reset to Draft" type="object" groups="account.group_account_invoice"
+                        attrs="{'invisible' : [('state', 'not in', ('posted', 'cancel'))]}"/>
+            </button>
+            <field name="state" position="before">
+                <button name="%(account.action_report_payment_receipt)d" string="Print Payment Receipt" type="action"/>
+            </field>
+            <field name="move_id" position="after">
+                <field name="ar_in_charge" attrs="{'invisible': [('payment_type', '!=', 'inbound')], 'readonly': [('state', '!=', 'draft')]}"/>
+            </field>
+            <field name="partner_id" position="after">
+                <div class="oe_inline o_td_label">
+                    <label for="is_payment_receipt" string="Sales Receipt" id="is_payment_receipt_for_customer"
+                           attrs="{'invisible': ['|', ('payment_type', '=', 'outbound'), '&amp;', ('payment_type', '=', 'inbound'), ('partner_type', '=', 'supplier')]}"/>
+                    <label for="is_payment_receipt" string="Purchase Receipt" id="is_payment_receipt_for_vendor"
+                           attrs="{'invisible': ['|', ('payment_type', '=', 'inbound'), '&amp;', ('payment_type', '=', 'outbound'), ('partner_type', '=', 'customer')]}"/>
+                </div>
+                <field name="is_payment_receipt" attrs="{ 'invisible': ['|', '&amp;', ('payment_type', '=', 'outbound'), ('partner_type', '=', 'customer'),
+                                                                               '&amp;', ('payment_type', '=', 'inbound'), ('partner_type', '=', 'supplier')],
+                                                            'readonly': [('state', '!=', 'draft')]}" nolabel="1"/>
+            </field>
+            <field name="partner_id" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('state', '!=', 'draft'), ('is_internal_transfer', '=', True)], 'required': [('is_payment_receipt', '=', True)]}</attribute>
+            </field>
+            <field name="destination_account_id" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_payment_receipt', '=', True)]}</attribute>
+            </field>
+            <field name="destination_account_id" position="after">
+                <field name="expense_account" attrs="{'invisible': ['|', ('is_payment_receipt', '=', False), ('payment_type', '=', 'inbound')], 'required': [('is_payment_receipt', '=', True), ('payment_type', '=', 'outbound')], 'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="income_account" attrs="{'invisible': ['|', ('is_payment_receipt', '=', False), ('payment_type', '=', 'outbound')], 'required': [('is_payment_receipt', '=', True), ('payment_type', '=', 'inbound')], 'readonly': [('state', '!=', 'draft')]}"/>
+            </field>
+            <field name="is_internal_transfer" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', '!=', 'draft')], 'invisible': [('is_payment_receipt', '=', True)]}</attribute>
+            </field>
+
+            <!--Hide amount block-->
+            <label for="amount" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </label>
+            <div name="amount_div" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </div>
+            <label for="amount" position="before">
+                <xpath expr="//group[@name='group3']//field[@name='currency_id']" position="move"/>
+            </label>
+
+            <!--Add open transactions + Total section-->
+            <sheet position="inside">
+                <field name="available_move_line_ids" invisible="1"/>
+
+                <notebook name="open_trans" attrs="{'invisible':
+                ['|', ('is_payment_receipt', '=', True), '&amp;', ('available_move_line_ids', '=', []), ('payment_line_ids', '=', [])]}">
+                    <page string="Open Transactions" >
+                        <field name="payment_line_ids" context="{'default_payment_id': id}"
+                               attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    </page>
+                </notebook>
+
+                <notebook name="applied_trans" attrs="{'invisible': ['|', ('is_payment_receipt', '=', True), ('state', '!=', 'posted')]}">
+                    <page string="Applied Transactions">
+                        <!--For Inbound Payment-->
+                        <field name="credit_partial_reconcile_ids" readonly="1"
+                               attrs="{'invisible': [('payment_type', '!=', 'inbound')]}">
+                            <tree>
+                                <field name="debit_currency_id" invisible="1"/>
+                                <field name="credit_currency_id" invisible="1"/>
+                                <field name="debit_move_id" string="Transaction"/>
+                                <field name="create_date" string="Applied Date"/>
+                                <field name="credit_amount_currency" string="Amount"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="debit_currency_id" invisible="1"/>
+                                        <field name="credit_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="debit_move_id" string="Transaction"/>
+                                        <field name="credit_amount_currency" string="Amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_date" string="Applied Date"/>
+                                        <field name="amount" string="Amount in Company Currency"/>
+                                    </group>
+                                </group>
+                            </form>
+                        </field>
+
+                        <!--For Outbound Payment-->
+                        <field name="debit_partial_reconcile_ids" readonly="1"
+                               attrs="{'invisible': [('payment_type', '!=', 'outbound')]}">
+                            <tree>
+                                <field name="debit_currency_id" invisible="1"/>
+                                <field name="credit_currency_id" invisible="1"/>
+                                <field name="credit_move_id" string="Transaction"/>
+                                <field name="create_date" string="Applied Date"/>
+                                <field name="debit_amount_currency" string="Amount"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="debit_currency_id" invisible="1"/>
+                                        <field name="credit_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="credit_move_id" string="Transaction"/>
+                                        <field name="debit_amount_currency" string="Amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_date" string="Applied Date"/>
+                                        <field name="amount" string="Amount in Company Currency"/>
+                                    </group>
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+
+                <group class="oe_subtotal_footer oe_right" colspan="2" name="payment_total">
+                    <field name="to_apply_amount" readonly="1" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <field name="applied_amount" readonly="1" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    <field name="writeoff_amount" readonly="1"
+                           attrs="{'invisible': [('state', 'not in', ['draft', 'posted'])]}"/>
+                    <field name="outstanding_payment" readonly="1" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                        <label for="amount"/>
+                    </div>
+                    <field name="amount" nolabel="1" class="oe_subtotal_footer_separator"
+                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                </group>
+            </sheet>
+        </field>
+    </record>
+
+    <!--Override action window to modify context to show Search By Amount Filter in tree views of payments-->
+    <record id="account.action_account_payments" model="ir.actions.act_window">
+        <field name="context">{
+            'default_payment_type': 'inbound',
+            'default_partner_type': 'customer',
+            'search_default_inbound_filter': 1,
+            'default_move_journal_types': ('bank', 'cash'),
+            'titleDisplay': 'Search by Payment Amount',
+            'compareField': 'amount',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+
+    <record id="account.action_account_payments_payable" model="ir.actions.act_window">
+        <field name="context">{
+            'default_payment_type': 'outbound',
+            'default_partner_type': 'supplier',
+            'search_default_outbound_filter': 1,
+            'default_move_journal_types': ('bank', 'cash'),
+            'titleDisplay': 'Search by Payment Amount',
+            'compareField': 'amount',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+</odoo>

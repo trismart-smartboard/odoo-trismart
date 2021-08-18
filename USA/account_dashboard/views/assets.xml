@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="assets_modify_account_dashboard_backend"
+              name="modify_account_dashboard_assets"
+              inherit_id="web.assets_backend">
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/account_dashboard/static/src/js/kpi_header.js"/>
+            <script type="text/javascript" src="/account_dashboard/static/src/js/account_dashboard.js"/>
+            <link rel="stylesheet" type="text/scss" href="/account_dashboard/static/src/scss/account_dashboard.scss"/>
+        </xpath>
+    </template>
+</odoo>

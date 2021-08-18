@@ -1,0 +1,37 @@
+<templates>
+    <div t-name="account_billable_expense.InfoCircle">
+        <div t-att-class="!widget.data.billable_expense_customer_id? 'invisible' : ''">
+            <a tabindex="0" t-attf-class="fa fa-info-circle fa-lg"/>
+        </div>
+    </div>
+
+    <div t-name="account_billable_expense.InfoPopOver">
+        <table class="table table-borderless table-sm">
+            <tbody>
+                <t>
+                    <tr t-if="data.billable_expense_customer_id">
+                        <td>
+                            <strong>Assigned to Customer:</strong>
+                        </td>
+                        <td>
+                            <t t-esc='data.billable_expense_customer_id.data.display_name'/>
+                        </td>
+                    </tr>
+                    <tr t-if="data.invoiced_to_id">
+                        <td>
+                            <strong>Posted Invoice:</strong>
+                        </td>
+                        <td>
+                            <t t-esc='data.invoiced_to_id.data.display_name'/>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+        <button t-if="data.invoiced_to_id" class="text-left btn btn-link action_open_inv"
+                type="button">
+            <i class="fa fa-fw o_button_icon fa-arrow-right"></i>
+            View Invoice
+        </button>
+    </div>
+</templates>

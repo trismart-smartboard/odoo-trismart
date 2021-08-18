@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="Documents Spreadsheet assets" inherit_id="web.assets_backend">
+        <xpath expr="//script[last()]" position="after">
+            <script type="text/javascript" src="/account_budget_spreadsheet/static/src/js/budget_spreadsheet_list_view.js"/>
+            <script type="text/javascript" src="/account_budget_spreadsheet/static/src/js/inherit_spreadsheet.js"/>
+            <script type="text/javascript" src="/account_budget_spreadsheet/static/src/js/documents_spreadsheet_utils.js"/>
+            <script type="text/javascript" src="/account_budget_spreadsheet/static/src/js/budget_spreadsheet_widget.js"/>
+            <script type="text/javascript" src="/account_budget_spreadsheet/static/src/js/inherit_spreadsheet_component.js"/>
+        </xpath>
+    </template>
+</odoo>
