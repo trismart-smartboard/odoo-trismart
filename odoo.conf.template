@@ -1,0 +1,42 @@
+[options]
+proxy_mode = True
+addons_path = /opt/odoo/enterprise,/opt/odoo/odoo/addons,/opt/odoo/shared_modules,/opt/odoo/customized_addons
+
+csv_internal_sep = ,
+data_dir = /var/lib/odoo/
+without_demo=all
+geoip_database = /usr/share/GeoIP/GeoIP.dat
+
+
+email_from = False
+
+admin_passwd = {{ config['ADMIN_PASS'] | default("W$vH8x:rXWD>.+5(", true) }}
+db_maxconn = {{ config['DB_MAX_CONN'] | default(48, true) }}
+db_host = {{ config['db_info']['Host'] | default("", true) }}
+db_port = 5432
+db_user = {{ config['db_info']['User'] | default("", true) }}
+db_password = {{ config['db_info']['Password'] | default("", true) }}
+
+
+{% if config['SERVICE_TYPE'] == "WEB" %}
+workers = {{ config['WORKERS'] | default(4, true) }}
+limit_time_cpu = 7200
+limit_time_real = 7200
+max_cron_threads = 4
+{% endif %}
+
+{% if config['SERVICE_TYPE'] == "QUEUE" %}
+max_cron_threads = 2
+workers = 0
+limit_time_cpu = 720
+limit_time_real = 720
+{% endif %}
+
+{% if config['Redis_Host'] is defined %}
+session_store_redis = True
+session_store_host = {{ config['Redis_Host'] | default('', true) }}
+session_store_dbindex = 0
+{% endif %}
+
+server_wide_modules=web,base,muk_session_store
+

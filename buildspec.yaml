@@ -1,0 +1,35 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+        docker: 18
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region us-east-1 --no-include-email)
+      - $(aws ecr get-login --region us-east-1 --no-include-email --registry-ids 811770454613)
+      - REPOSITORY_URI=$REPOSITORY_URI
+      - IMAGE_TAG=release-$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-12)
+      - LATEST_IMAGE_TAG="$ENVIRONMENT-latest"
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION > version.txt
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker pull  $REPOSITORY_URI:$IMAGE_TAG  || docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:$LATEST_IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:$LATEST_IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"odoo","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > deploy.json
+      - printf '[{"name":"odoo","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG >  imagedefinitions.json
+artifacts:
+    files:
+      - deploy.json
+      - imagedefinitions.json

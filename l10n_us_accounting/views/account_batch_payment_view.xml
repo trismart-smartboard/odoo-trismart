@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_batch_payment_form_adjustment" model="ir.ui.view">
+        <field name="name">account.batch.payment.form.adjustment</field>
+        <field name="model">account.batch.payment</field>
+        <field name="inherit_id" ref="account_batch_payment.view_batch_payment_form"/>
+        <field name="arch" type="xml">
+            <group position="before">
+                <div class="oe_button_box">
+                    <button name="action_open_journal_entries" class="oe_stat_button" icon="fa-bars" type="object"
+                            string="Journal Entries" attrs="{'invisible': [('fund_line_ids', '=', [])]}">
+                    </button>
+                </div>
+            </group>
+
+            <notebook position="after">
+                <div class="mt-5">
+                    <u>Notes:</u>
+                    <ul>
+                        <li>If this is an Inbound Batch Payment, adjustments with positive amount mean money received, negative amount mean money paid.</li>
+                        <li>If this is an Outbound Batch Payment, adjustments with positive amount mean money paid, negative amount mean money received.</li>
+                    </ul>
+                </div>
+                <notebook>
+                    <page string="Adjustments">
+                        <field name="fund_line_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                            <tree create="1" edit="0" decoration-info="move_state == 'draft'"
+                                  decoration-muted="move_state == 'cancel'">
+                                <field name="line_currency_id" invisible="1"/>
+                                <field name="account_move_id" invisible="1"/>
+                                <field name="batch_type" invisible="1"/>
+                                <field name="line_payment_date" required="1"/>
+                                <field name="line_partner_id"/>
+                                <field name="line_account_id" required="1" domain="[('deprecated', '=', False)]"/>
+                                <field name="line_communication"/>
+                                <field name="line_amount" required="1" sum="Total Adjustments"/>
+                                <field name="move_state" invisible="1"/>
+                                <field name="company_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <group class="oe_subtotal_footer oe_right" colspan="2" style="border-top: none;">
+                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                        <label for="amount" string="Total"/>
+                    </div>
+                    <field name="amount" nolabel="1" class="oe_subtotal_footer_separator"/>
+                </group>
+            </notebook>
+
+            <!--Allow user to select open transactions when creating new payment-->
+            <xpath expr="//field[@name='payment_ids']/form/group" position="after">
+                <field name="available_move_line_ids" invisible="1"/>
+
+                <notebook name="open_trans" attrs="{'invisible': [('available_move_line_ids', '=', []), ('payment_line_ids', '=', [])]}">
+                    <page string="Open Transactions">
+                        <field name="payment_line_ids" context="{'default_payment_id': id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    </page>
+                </notebook>
+
+                <notebook name="applied_trans" attrs="{'invisible': [('state', '!=', 'posted')]}">
+                    <page string="Applied Transactions">
+                        <!--For Inbound Payment-->
+                        <field name="credit_partial_reconcile_ids" readonly="1" attrs="{'invisible': [('payment_type', '!=', 'inbound')]}">
+                            <tree>
+                                <field name="debit_currency_id" invisible="1"/>
+                                <field name="credit_currency_id" invisible="1"/>
+                                <field name="debit_move_id" string="Transaction"/>
+                                <field name="create_date" string="Applied Date"/>
+                                <field name="credit_amount_currency" string="Amount"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="debit_currency_id" invisible="1"/>
+                                        <field name="credit_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="debit_move_id" string="Transaction"/>
+                                        <field name="credit_amount_currency" string="Amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_date" string="Applied Date"/>
+                                        <field name="amount" string="Amount in Company Currency"/>
+                                    </group>
+                                </group>
+                            </form>
+                        </field>
+
+                        <!--For Outbound Payment-->
+                        <field name="debit_partial_reconcile_ids" readonly="1"
+                               attrs="{'invisible': [('payment_type', '!=', 'outbound')]}">
+                            <tree>
+                                <field name="debit_currency_id" invisible="1"/>
+                                <field name="credit_currency_id" invisible="1"/>
+                                <field name="credit_move_id" string="Transaction"/>
+                                <field name="create_date" string="Applied Date"/>
+                                <field name="debit_amount_currency" string="Amount"/>
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="debit_currency_id" invisible="1"/>
+                                        <field name="credit_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
+                                        <field name="credit_move_id" string="Transaction"/>
+                                        <field name="debit_amount_currency" string="Amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_date" string="Applied Date"/>
+                                        <field name="amount" string="Amount in Company Currency"/>
+                                    </group>
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                </notebook>
+
+                <group class="oe_subtotal_footer oe_right" colspan="2" name="payment_total">
+                    <field name="to_apply_amount" readonly="1" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <field name="applied_amount" readonly="1" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    <field name="writeoff_amount" readonly="1" attrs="{'invisible': [('state', 'not in', ['draft', 'posted'])]}"/>
+                    <field name="outstanding_payment" readonly="1" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                        <label for="amount"/>
+                    </div>
+                    <field name="amount" nolabel="1" class="oe_subtotal_footer_separator"
+                           attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='payment_ids']/form//label[@for='amount']" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='payment_ids']/form//field[@name='amount']" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_batch_payment_fund_line_form" model="ir.ui.view">
+		<field name="name">account_batch_payment_fund_line_form</field>
+		<field name="model">account.batch.deposit.fund.line</field>
+		<field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group name="left">
+                            <field name="line_currency_id" invisible="1"/>
+                            <field name="line_partner_id" required="1"/>
+                            <field name="line_account_id" required="1"/>
+                            <field name="line_amount" required="1"/>
+                        </group>
+                        <group name="right">
+                            <field name="line_payment_date" required="1"/>
+                            <field name="line_communication" required="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+		</field>
+	</record>
+
+    <!--Override action window to modify context to show Search By Amount Filter in tree views of batch payments-->
+    <record id="account_batch_payment.action_batch_payment_in" model="ir.actions.act_window">
+        <field name="context">{
+            'search_default_open': 1,
+            'default_batch_type': 'inbound',
+            'titleDisplay': 'Search by Amount',
+            'compareField': 'amount',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+
+    <record id="account_batch_payment.action_batch_payment_out" model="ir.actions.act_window">
+        <field name="context">{
+            'search_default_open': 1,
+            'default_batch_type': 'outbound',
+            'titleDisplay': 'Search by Amount',
+            'compareField': 'amount',
+            'searchByAmountFilter': 1,
+            'isNegativeChecking': 0
+        }</field>
+    </record>
+</odoo>

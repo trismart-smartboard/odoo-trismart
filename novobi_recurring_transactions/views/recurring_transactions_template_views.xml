@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="recurring_transaction_tree" model="ir.ui.view">
+        <field name="name">recurring_transaction_tree</field>
+        <field name="model">recurring.transaction</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="transaction_type"/>
+                <field name="recurring_interval"/>
+                <field name="start_date"/>
+                <field name="next_transaction_date"/>
+                <field name="create_transaction_as"/>
+                <field name="journal_id" groups="account.group_account_readonly"
+                       options="{'no_create': True}"/>
+                <field name="currency_id" options="{'no_create': True}"/>
+                <field name="ref"/>
+                <field name="state" widget="badge"  decoration-success="state == 'confirm'" decoration-primary="state == 'done'" decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+    <record id="recurring_transaction_form" model="ir.ui.view">
+        <field name="name">recurring_transaction_form</field>
+        <field name="model">recurring.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Recurring Template Template">
+                <header>
+                    <button name="action_confirm" string="Confirm" class="oe_highlight"
+                            type="object"
+                            states="draft"
+                    />
+                    <button name="action_draft"
+                            string="Reset to Draft" type="object"
+                            states="confirm"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button"
+                                help="Created transactions from this template"
+                                type="object"
+                                name="action_created_transactions"
+                                icon="fa-file-text-o"
+                                states="confirm,done">
+                            <field class="o_stat_info" name="transaction_count"
+                                   string="Transactions" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Recurring Templates"
+                                   attrs="{'readonly': True}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="transaction_type"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                            <label for="recurring_interval"/>
+                            <div class="o_row">
+                                <span class="mr-1">Every</span>
+                                <field name="recurring_interval" required="1"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="recurring_rule_type" class="field_rule_type" required="1"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </div>
+                            <field name="recurring_rule_boundary" widget="radio" options="{'horizontal':true}"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <span class="o_form_label"
+                                  attrs="{'invisible': [('recurring_rule_boundary','=','unlimited')]}"/>
+                            <div class="o_row" attrs="{'invisible': [('recurring_rule_boundary','=','unlimited')]}">
+                                <span class="mr-1">For</span>
+                                <field name="recurring_rule_count" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <span class="mr-1">period(s)</span>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="create_transaction_as"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                            <field name="start_date" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                            <field name="next_transaction_date"/>
+                        </group>
+                    </group>
+                    <group string="Transaction Information" name="Transaction Information">
+                        <group name="journal">
+                            <field name="partner_type"
+                                   attrs="{'invisible': [('transaction_type','not in',['customer_payment','bill_payment'])], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="partner_id"
+                                   attrs="{'invisible': [('transaction_type','=','manual_journal_entry')], 'required': [('transaction_type', 'in', ['customer_invoice','vendor_bill'])], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <label for="journal_id" groups="account.group_account_readonly"/>
+                            <div name="journal_div" class="d-flex">
+                                <field name="journal_id" groups="account.group_account_readonly"
+                                       domain="transaction_type in ['customer_payment','bill_payment']
+                                                and [('type', 'in', ['bank','cash'])]
+                                                or []"
+                                       attrs="{'readonly': ['|',('state', '!=', 'draft'), ('transaction_type','in',['customer_invoice','vendor_bill'])]}"
+                                       force_save="1" options="{'no_create': True}"/>
+                                <span class="oe_inline o_form_label mx-3 oe_read_only">in</span>
+                                <!-- Bigger margin on the left because in edit mode the external link button covers the text -->
+                                <span class="oe_inline o_form_label mr-3 ml-5 oe_edit_only"
+                                      groups="base.group_multi_currency">in
+                                </span>
+                                <field name="currency_id" groups="base.group_multi_currency"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </div>
+                            <field name="available_payment_method_ids" invisible="1"/>
+                            <field name="payment_method_id" widget="radio"
+                                   attrs="{'invisible': [('transaction_type','not in',['customer_payment','bill_payment'])], 'readonly': [('state', '!=', 'draft')]}"/>
+
+                        </group>
+                        <group name="reference">
+                            <field name="payment_type"
+                                   readonly="1" force_save="1"
+                                   attrs="{'invisible': [('transaction_type','not in',['customer_payment','bill_payment'])]}"/>
+                            <field name="amount" attrs="{'invisible': [('transaction_type','not in',['customer_payment','bill_payment'])], 'readonly': [('state', '!=', 'draft')]}"/>
+                            <div>
+                                <label for="ref" style="font-weight:bold" string="Reference" attrs="{'invisible': [('transaction_type','in',['customer_payment','bill_payment'])]}"/>
+                                <label for="ref" style="font-weight:bold" string="Memo" attrs="{'invisible': [('transaction_type','not in',['customer_payment','bill_payment'])]}"/>
+                            </div>
+                            <field name="ref" nolabel="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook attrs="{'invisible': [('transaction_type','in',['customer_payment','bill_payment'])]}">
+                        <page id='transaction_lines' string="Transaction lines" >
+                            <field name="line_ids"
+                                   widget="section_and_note_one2many"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                   mode="tree">
+                                <tree editable="bottom" string="Journal Items"
+                                      context="{'default_currency_id': currency_id}">
+                                    <control>
+                                        <create name="add_line_control" string="Add a line"/>
+                                        <create name="add_section_control" string="Add a section"
+                                                context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note"
+                                                context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <!-- Displayed fields -->
+                                    <field name="company_id" invisible="1"/>
+                                    <field name="product_id"
+                                           domain="parent.transaction_type in ('customer_invoice')
+                                                and [('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]
+                                                or [('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'not in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="account_id"
+                                           groups="account.group_account_readonly"
+                                           options="{'no_create': True}"/>
+                                    <field name="partner_id"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="name"/>
+                                    <field name="analytic_account_id"
+                                           groups="analytic.group_analytic_accounting"
+                                           domain="['|', ('company_id', '=', company_id), ('company_id', '=', False)]"
+                                    />
+                                    <field name="analytic_tag_ids"
+                                           groups="analytic.group_analytic_tags"
+                                           widget="many2many_tags"
+                                    />
+                                    <field name="currency_id"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="debit"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="credit"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="quantity"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'not in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="price_unit"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'not in', ['customer_invoice','vendor_bill'])]}"/>
+                                    <field name="tax_ids"
+                                           widget="many2many_tags"
+                                           domain="
+                                           parent.transaction_type in ('customer_invoice')
+                                           and [('type_tax_use', '=', 'sale'), ('company_id', '=', parent.company_id)]
+                                           or
+                                           parent.transaction_type in ('vendor_bill')
+                                           and [('type_tax_use', '=', 'purchase'), ('company_id', '=', parent.company_id)]
+                                           or []"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'not in', ['customer_invoice','vendor_bill'])]}"
+                                           context="{'append_type_to_tax_name': parent.transaction_type == 'manual_journal_entry'}"/>
+                                    <field name="price_subtotal"
+                                           attrs="{'column_invisible': [('parent.transaction_type', 'not in', ['customer_invoice','vendor_bill'])]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_recurring_transaction" model="ir.actions.act_window">
+        <field name="name">Recurring Transaction Templates</field>
+        <field name="res_model">recurring.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="recurring_transaction_tree"/>
+    </record>
+
+    <menuitem id="recurring_transactions_menu"
+              name="Recurring Transactions" web_icon="novobi_recurring_transactions,static/description/icon.png"
+    />
+    <menuitem id="recurring_transactions_template_menu"
+              name="Recurring Transaction Templates"
+              action="action_recurring_transaction"
+              parent="recurring_transactions_menu"
+              sequence="1"
+    />
+
+</odoo>

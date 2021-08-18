@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_journal_dashboard_reconciliation_kanban_view" model="ir.ui.view">
+        <field name="name">account_journal_dashboard_reconciliation_kanban_view</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account_accountant.account_journal_dashboard_kanban_view"/>
+        <field name="arch" type="xml">
+            <!--Change text of Reconciliation Button-->
+            <xpath expr="//button[@name='action_open_reconcile']/.." position="replace">
+                <t t-if="dashboard.number_for_reviews > 0">
+                    <button type="object" name="action_open_reconcile" class="btn btn-primary"
+                            groups="account.group_account_user"><t t-esc="dashboard.number_for_reviews"/> Items For Review</button>
+                </t>
+
+                <button type="object" name="action_usa_reconcile" class="btn btn-primary"> Reconcile </button>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="account_journal_dashboard_kanban_view_usa" model="ir.ui.view">
+        <field name="name">account_journal_dashboard_kanban_view_usa</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+        <field name="arch" type="xml">
+            <!--Hide Operations menu (BSL)-->
+            <xpath expr='//t[@t-name="JournalManage"]//a[@context="{&apos;action_name&apos;: &apos;action_bank_statement_line&apos;, &apos;search_default_journal&apos;: True}"]/..' position="attributes">
+                <attribute name="style">display:none</attribute>
+            </xpath>
+
+            <!--Add 3 menus for Bank Statement Lines-->
+            <xpath expr="//t[@t-name='JournalManage']//a[@name='open_action_with_context']/.." position="after">
+                <div>
+                    <a role="menuitem" type="object" name="open_bank_statement_line"
+                       context="{'status': 'reconciled'}">Reconciled Items</a>
+                </div>
+                <div>
+                    <a role="menuitem" type="object" name="open_bank_statement_line"
+                       context="{'status': 'confirm'}">Reviewed Items</a>
+                </div>
+                <div>
+                    <a role="menuitem" type="object" name="open_bank_statement_line"
+                       context="{'status': 'excluded'}">Excluded Items</a>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Correct some words for consistency in dashboard -->
+    <record id="account_reports_journal_dashboard_kanban_view_usa" model="ir.ui.view">
+        <field name="name">account.journal.dashboard.kanban.reports.usa</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account_reports.account_reports_journal_dashboard_kanban_view"/>
+        <field name="arch" type="xml">
+            <!--Reconciliation Report-->
+            <a name="%(account_reports.action_account_report_bank_reconciliation_with_journal)d" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </a>
+            <a name="%(account_reports.action_account_report_bank_reconciliation_with_journal)d" position="after">
+                <a type="action" name="%(action_bank_reconciliation_data_report)d">Reconciliation Reports</a>
+            </a>
+        </field>
+    </record>
+</odoo>

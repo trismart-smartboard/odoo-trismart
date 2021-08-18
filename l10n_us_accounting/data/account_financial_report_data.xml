@@ -1,0 +1,138 @@
+<odoo>
+    <data noupdate="0">
+         <!--new account-->
+        <!-- NET OPERATION PROFIT/LOSS -->
+        <record id="account_financial_report_net_operating_profit_loss0" model="account.financial.html.report.line">
+            <field name="name">NET OPERATING PROFIT/LOSS</field>
+            <field name="code">NOPL</field>
+            <field name="formulas">GRP - LEX</field>
+            <field name="financial_report_id" ref="account_reports.account_financial_report_profitandloss0"/>
+            <field name="parent_id" ref=''/>
+            <field name="groupby">account_id</field>
+            <field name="sequence" eval="1"/>
+            <field name="green_on_positive" eval="True"/>
+            <field name="level" eval="0"/>
+        </record>
+
+        <!-- Other Expense -->
+        <record id="account_financial_report_other_expense0" model="account.financial.html.report.line">
+            <field name="name">Other Expense</field>
+            <field name="code">OEX</field>
+            <field name="formulas">sum</field>
+            <field name="financial_report_id" ref="account_reports.account_financial_report_profitandloss0"/>
+            <field name="parent_id" ref=''/>
+            <field name="domain"
+                   eval="[('account_id.user_type_id', '=', ref('l10n_us_accounting.data_account_type_other_expense'))]"/>
+            <field name="groupby">account_id</field>
+            <field name="sequence" eval="3"/>
+            <field name="green_on_positive" eval="False"/>
+            <field name="level" eval="0"/>
+        </record>
+
+        <!-- PROFIT & LOSS REPORT SECTIONS-->
+        <!-- NET PROFIT/LOSS -->
+        <record id="account_reports.account_financial_report_net_profit0" model="account.financial.html.report.line">
+            <field name="name">NET PROFIT/LOSS</field>
+            <field name="formulas">OPINC + OIN -COS - EXP - DEP - OEX</field>
+            <field name="sequence" eval="4"/>
+        </record>
+
+        <!-- INCOME -->
+        <record id="account_reports.account_financial_report_totalincome0" model="account.financial.html.report.line">
+            <field name="parent_id" ref=''/>
+            <field name="financial_report_id" ref=""/>
+        </record>
+
+        <!--  Gross Profit -->
+        <record id="account_reports.account_financial_report_gross_profit0" model="account.financial.html.report.line">
+             <field name="parent_id" ref='account_financial_report_net_operating_profit_loss0'/>
+        </record>
+
+        <!--  Expense -->
+        <record id="account_reports.account_financial_report_less_expenses0" model="account.financial.html.report.line">
+            <field name="parent_id" ref='account_financial_report_net_operating_profit_loss0'/>
+            <field name="financial_report_id" ref=''/>
+            <field name="level" eval="2"/>
+        </record>
+
+        <!--  Other Income -->
+        <record id="account_reports.account_financial_report_other_income0" model="account.financial.html.report.line">
+            <field name="parent_id" ref=''/>
+            <field name="financial_report_id" ref="account_reports.account_financial_report_profitandloss0"/>
+            <field name="level" eval="0" />
+        </record>
+
+        <!--  Operating Expense -->
+        <record id="account_reports.account_financial_report_expense0" model="account.financial.html.report.line">
+            <field name="name">Operating Expense</field>
+            <field name="level" eval="3"/>
+        </record>
+
+        <!--  Depreciation -->
+        <record id="account_reports.account_financial_report_depreciation0" model="account.financial.html.report.line">
+            <field name="level" eval="3"/>
+        </record>
+
+        <!-- BALANCE SHEET -->
+        <!-- EQUITY -->
+        <record id="account_reports.account_financial_report_equity0" model="account.financial.html.report.line">
+            <field name="formulas">RETAINED_EARNINGS + CURR_YEAR_EARNINGS_ALLOC + CURR_YEAR_EARNINGS_PNL + PREV_YEAR_EARNINGS</field>
+        </record>
+
+        <!-- Open Balance Equity -->
+        <record id="account_reports.account_financial_current_year_earnings_line_2" model="account.financial.html.report.line">
+            <field name="name">Opening Balance Equity</field>
+            <field name="sequence" eval="1"/>
+            <field name="level" eval="2"/>
+            <field name="parent_id" ref='account_reports.account_financial_report_equity0'/>
+        </record>
+
+        <!-- Curent Year Net Profit/Loss -->
+        <record id="account_reports.account_financial_current_year_earnings_line_1" model="account.financial.html.report.line">
+            <field name="name">Current Year Net Profit/Loss</field>
+            <field name="domain" eval="[('account_id.user_type_id', 'in', [
+                ref('account.data_account_type_revenue'),
+                ref('account.data_account_type_other_income'),
+                ref('account.data_account_type_direct_costs'),
+                ref('account.data_account_type_expenses'),
+                ref('account.data_account_type_depreciation'),
+                ref('l10n_us_accounting.data_account_type_other_expense'),
+            ])]" />
+            <field name="sequence" eval="5"/>
+            <field name="level" eval="2"/>
+            <field name="parent_id" ref='account_reports.account_financial_report_equity0'/>
+        </record>
+
+        <!-- Retained Earnings -->
+        <record id="account_reports.account_financial_previous_year_earnings0" model="account.financial.html.report.line">
+            <field name="name">Retained Earnings</field>
+            <field name="sequence" eval="10"/>
+            <field name="parent_id" ref='account_reports.account_financial_report_equity0'/>
+            <field name="level" eval="2"/>
+        </record>
+
+        <!-- Capital and Distribution -->
+         <record id="account_reports.account_financial_retained_earnings0" model="account.financial.html.report.line">
+            <field name="name">Capital and Distribution</field>
+            <field name="sequence" eval="15"/>
+            <field name="level" eval="2"/>
+         </record>
+
+        <!-- Liabilities + Equity -->
+        <record id="account_reports.account_financial_report_liabilities_and_equity_view0" model="account.financial.html.report.line">
+            <field name="sequence" eval="5"/>
+        </record>
+
+        <!--Hide some sections-->
+
+        <!-- Unallocated Earnings -->
+        <record id="account_reports.account_financial_unaffected_earnings0" model="account.financial.html.report.line">
+            <field name="parent_id" ref=''/>
+        </record>
+
+        <!-- Current Year Unallocated Earnings -->
+        <record id="account_reports.account_financial_current_year_earnings0" model="account.financial.html.report.line">
+            <field name="parent_id" ref=''/>
+        </record>
+    </data>
+</odoo>

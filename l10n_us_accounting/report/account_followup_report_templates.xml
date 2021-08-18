@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="template_followup_overdue_periods_report" inherit_id="account_followup.template_followup_report">
+        <xpath expr="//div[hasclass('js_account_report_footnotes')]" position="before">
+            <table name="overdue_periods_section" class="o_account_reports_table mt-5">
+                <thead>
+                    <tr class="o_account_report_column_header followup_report_header summary_title_report_usa">
+                        <th class="o_account_report_column_header account_report_header_right">Not Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">1 - 30 Days Past Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">31 - 60 Days Past Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">61 - 90 Days Past Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">91 - 120 Days Past Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">120+ Days Past Due</th>
+                        <th class="o_account_report_column_header account_report_header_right">Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="summary_lines" t-as="line">
+                        <t t-if="line.get('class') == 'summary_values'">
+                            <tr>
+                                <t t-foreach="line['columns']" t-as="column">
+                                    <td t-attf-class="#{column_last and 'summary_values_report_usa summary_values_total_report_usa' or 'summary_values_report_usa'} #{context.get('print_mode') and 'summary_values_print' or ''}">
+                                        <t t-esc="column"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                        <t t-elif="line.get('class') == 'summary_values_empty_line'">
+                            <tr>
+                                <t t-foreach="line['columns']" t-as="column">
+                                    <td class="summary_values_empty_line"/>
+                                </t>
+                            </tr>
+                        </t>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+
+    <template id="usa_main_table_header_followup_report" inherit_id="account_reports.main_table_header" primary="True">
+        <xpath expr="//thead" position="attributes">
+            <attribute name="class">o_account_reports_header_hierarchy followup_report_header</attribute>
+        </xpath>
+    </template>
+</odoo>

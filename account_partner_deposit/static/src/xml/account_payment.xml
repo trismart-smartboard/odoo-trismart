@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+    <t t-extend="ShowPaymentInfo">
+        <t t-jquery=".o_payment_label" t-operation="replace">
+            <i class="o_field_widget text-right o_payment_label">
+                <t t-if="line.trans_label">
+                    <t t-esc="line.trans_label"/> - <t t-esc="line.date"/>
+                </t>
+                <t t-else="">
+                    Paid on <t t-esc="line.date"/>
+                </t>
+            </i>
+        </t>
+    </t>
+</templates>
