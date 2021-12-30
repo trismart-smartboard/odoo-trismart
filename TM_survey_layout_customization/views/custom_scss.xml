@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+ <odoo>
+     <data>
+         <template id="survey_assets_inherited" inherit_id="survey.question_simple_choice">
+             <xpath expr="." position="inside">
+                 <link rel="stylesheet" href="/TM_survey_layout_customization/static/src/scss/survey_templates_form_custom.scss"/>
+             </xpath>
+         </template>
+     </data>
+ </odoo>
+
