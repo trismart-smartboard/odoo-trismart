@@ -1,0 +1,190 @@
+
+.o_survey_form, .o_survey_print, .o_survey_session_manage, .o_survey_quick_access {
+    .o_survey_question_error {
+        height: 0px;
+        transition: height .5s ease;
+        line-height: 4rem;
+        &.slide_in {
+            height: 4rem;
+        }
+    }
+
+    fieldset[disabled] {
+        .o_survey_question_text_box,
+        .o_survey_question_date,
+        .o_survey_question_datetime,
+        .o_survey_question_numerical_box {
+            padding-left: 0px;
+        }
+    }
+
+    .o_survey_question_text_box,
+    .o_survey_question_date,
+    .o_survey_question_datetime,
+    .o_survey_question_numerical_box {
+        border: 0px;
+        border-bottom: 1px solid $primary;
+        &:disabled {
+            color: black !important;
+            border-color: $gray-600;
+            border-bottom: 1px solid $gray-600;
+        }
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    .o_survey_form_date .input-group-append {
+        right: 0;
+        bottom: 5px;
+        top: auto;
+    }
+
+    .o_survey_choice_btn {
+        transition: background-color 0.3s ease;
+        flex: 0 0 100px !important;
+        color: black !important;
+
+        span {
+            line-height: 25px;
+            font-size:25px;
+        }
+        i {
+            margin-right: -0.2rem;
+            float: left !important;
+            top: -10px !important;
+            font-size: 37px;
+            &.fa-check-circle,&.fa-check-square {
+                display: none;
+            }
+        }
+
+        &.o_survey_selected i {
+            display: none;
+            &.fa-check-circle,&.fa-check-square {
+                display: inline;
+            }
+        }
+    }
+
+    input::placeholder, textarea::placeholder {
+        font-weight: 300;
+    }
+
+    .o_survey_page_per_question.o_survey_simple_choice.o_survey_minimized_display,
+    .o_survey_page_per_question.o_survey_multiple_choice.o_survey_minimized_display,
+    .o_survey_page_per_question.o_survey_numerical_box,
+    .o_survey_page_per_question.o_survey_date,
+    .o_survey_page_per_question.o_survey_datetime {
+        // 'pixel perfect' layouting for choice questions having less than 5 choices in page_per_question mode
+        // we use media queries instead of bootstrap classes because they don't provide everything needed here
+        @media (min-width: 768px) {
+            width: 50%;
+            position: relative;
+            left: 25%;
+        }
+    }
+
+    .o_survey_question_matrix {
+        td {
+            min-width: 100px;
+            i {
+                font-size: 22px;
+                display: none;
+                &.o_survey_matrix_empty_checkbox {
+                    display: inline;
+                }
+            }
+            .o_survey_choice_key {
+                left: 10px;
+                right: auto;
+                top: 12px;
+                > span > span {
+                    top: 0px;
+                }
+            }
+
+            &.o_survey_selected {
+                i {
+                    display: inline;
+                    &.o_survey_matrix_empty_checkbox {
+                        display: none;
+                    }
+                }
+            }
+        }
+        thead {
+            th:first-child {
+                border-top-left-radius: .25rem;
+            }
+            th:last-child {
+                border-top-right-radius: .25rem;
+            }
+        }
+        tbody tr:last-child {
+            th {
+                border-bottom-left-radius: .25rem;
+            }
+            td:last-child {
+                border-bottom-right-radius: .25rem;
+            }
+        }
+    }
+}
+
+
+/**********************************************************
+                    Form Specific Style
+ **********************************************************/
+
+.o_survey_form {
+    min-height: 25rem;
+
+    .o_survey_choice_btn {
+        cursor: pointer;
+        background-color: white !important;
+        box-shadow: white 0px 0px 0px 0px !important;
+
+        &.o_survey_selected {
+            box-shadow: white 0px 0px 0px 0px !important;
+        }
+
+        &:hover {
+            background-color: rgba($primary, 0.3);
+            .o_survey_choice_key span.o_survey_key {
+                opacity: 1;
+            }
+        }
+    }
+
+    .o_survey_choice_key {
+        width: 25px;
+        height: 25px;
+        border: 1px solid $primary;
+        span {
+            font-size: smaller;
+            top: -1px;
+            &.o_survey_key {
+                right: 21px;
+                border: 1px solid $primary;
+                border-right: 0px;
+                height: 25px;
+                transition: opacity 0.4s ease;
+                white-space: nowrap;
+                opacity: 0;
+                span {
+                    top: -2px;
+                }
+            }
+        }
+    }
+
+    .o_survey_question_matrix td:hover {
+        background-color: rgba($primary, 0.5);
+        cursor: pointer;
+        .o_survey_choice_key span.o_survey_key {
+            opacity: 1;
+        }
+    }
+}
+
