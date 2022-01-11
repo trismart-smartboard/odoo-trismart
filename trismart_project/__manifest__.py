@@ -9,7 +9,8 @@
     'version': '15.0',
     'license': 'OPL-1',
     'depends': [
-        'project'
+        'project',
+        'crm'
     ],
     'data': [
 
