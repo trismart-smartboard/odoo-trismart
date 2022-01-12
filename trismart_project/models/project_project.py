@@ -10,6 +10,7 @@ class ProjectProject(models.Model):
     billing_period_one_start_date = fields.Date('Billing Period Start Date')
 
     # Monthly Usage Fields
+    monthly_usages = fields.One2many('monthly.usage', 'project_id', string='Monthly Usage')
 
     # Metrics Final Fields
     proposal_id = fields.Many2one('documents.document', string='Proposal Id')
@@ -25,4 +26,10 @@ class ProjectProject(models.Model):
     lease_escalator = fields.Float('Lease Escalator')
     lender = fields.Char('Lender')
     finance_term = fields.Integer('Finance Term in Years')
+    finance_apr = fields.Float('Finance APR')
     down_payment = fields.Float('Down Payment')
+
+    # Module Array, Adders and Incentive
+    module_array_ids = fields.One2many('project.module.array', 'project_id', string='Monthly Array')
+    adder_ids = fields.One2many('project.adder', 'project_id', string='Adder')
+    incentive_ids = fields.One2many('project.incentive', 'project_id', string='Incentive')

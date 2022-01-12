@@ -15,3 +15,4 @@ class Document(models.Model):
     document_name = fields.Char('Proposal')
     document_url = fields.Char('Max Layout')
     created = fields.Char('Monthly Production')
+
