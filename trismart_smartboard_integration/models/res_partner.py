@@ -1,4 +1,4 @@
-from odoo import api, fields, models, tools, SUPERUSER_ID
+from odoo import api, fields, models, tools
 
 class Partner(models.Model):
     _inherit = "res.partner"

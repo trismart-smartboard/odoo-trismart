@@ -10,6 +10,7 @@
     'depends': [
                 'crm',
                 'project',
+                'project_template',
                 ],
     'data': [
     ],
