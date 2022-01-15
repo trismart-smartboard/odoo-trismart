@@ -3,16 +3,12 @@ from odoo import api, fields, models, tools
 class Project(models.Model):
     _inherit = "project.project"
 
-    sb_lead_id = fields.Char(string='Smartboard Lead ID', readonly=True)
+    sb_lead_id = fields.Integer(string='Smartboard Lead ID', readonly=True)
 
     def create_project_from_template(self, sb_lead_id=None):
         if sb_lead_id:
-            if " (TEMPLATE)" in self.name:
-                new_name = self.name.replace(" (TEMPLATE)", " (COPY)")
-            else:
-                new_name = self.name + " (COPY)"
             new_project = self.copy(
-                default={"name": 'SBLead-' + sb_lead_id, 'sb_lead_id': sb_lead_id, "active": True, "alias_name": False}
+                default={"name": 'SBLead-' + str(sb_lead_id), 'sb_lead_id': sb_lead_id, "active": True, "alias_name": False}
             )
             if new_project.subtask_project_id != new_project:
                 new_project.subtask_project_id = new_project.id
