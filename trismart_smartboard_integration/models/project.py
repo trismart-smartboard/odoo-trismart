@@ -8,7 +8,7 @@ class Project(models.Model):
     def create_project_from_template(self, sb_lead_id=None):
         if sb_lead_id:
             new_project = self.copy(
-                default={"name": 'SBLead-' + str(sb_lead_id), 'sb_lead_id': sb_lead_id, "active": True, "alias_name": False}
+                default={"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id, "active": True, "alias_name": False}
             )
             if new_project.subtask_project_id != new_project:
                 new_project.subtask_project_id = new_project.id
