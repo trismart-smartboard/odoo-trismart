@@ -20,8 +20,10 @@ class CrmLead(models.Model):
     association_app_id = fields.Selection([
         ('1', 'Ignite'),
         ('2', 'Solo'),
-        ('3', 'Enerflo')
-    ])
+        ('3', 'Enerflo'),
+        ('4', 'Odoo'),
+        ('5', 'Salesforce')
+    ], string='Proposal Tool')
     lat = fields.Float('Latitude')
     long = fields.Float('Longitude')
     created = fields.Date('Date Created')
@@ -30,6 +32,7 @@ class CrmLead(models.Model):
         ('2', 'Spanish')
     ])
     disposition_date = fields.Date('Disposition Date')
+    disposition_id = fields.Many2one('disposition.type', string='Disposition')
     account_id = fields.Many2one('res.partner', string='Account')
     market_id = fields.Many2one('crm.market', string='Market')
     preferred_contact_type_id = fields.Selection([
