@@ -16,7 +16,7 @@ class Adder(models.Model):
     _name = 'project.adder'
     _description = 'Project Adder'
 
-    size = fields.Integer('Adder (#) Size')
+    size = fields.Char('Adder (#) Size')
     qty = fields.Integer('Adder (#) Quantity')
     cost = fields.Float('Adder (#) Cost')
     name = fields.Char('Adder (#) Name')

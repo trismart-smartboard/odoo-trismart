@@ -21,5 +21,5 @@ class MonthlyUsage(models.Model):
         ('nov', 'November'),
         ('dec', 'December'),
     ], string='Month')
-    billing_number = fields.Float('Billing Number', default=0.0)
-    consumption_number = fields.Float('Consumption Number', default=0.0)
+    usage_type = fields.Selection([('billing', 'Billing'), ('consumption', 'Consumption')], string='Type of Usage')
+    usage_number = fields.Float('Usage Number')

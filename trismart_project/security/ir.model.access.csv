@@ -1,5 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_crm_franchise,crm_franchise,model_crm_franchise,base.group_user,1,1,1,1
 access_crm_market,crm_market,model_crm_market,base.group_user,1,1,1,1
 access_crm_franchise,crm_franchise,model_crm_franchise,base.group_user,1,1,1,1
 access_project_incentive,project_incentive,model_project_incentive,base.group_user,1,1,1,1

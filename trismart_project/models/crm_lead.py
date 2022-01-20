@@ -30,7 +30,7 @@ class CrmLead(models.Model):
         ('2', 'Spanish')
     ])
     disposition_date = fields.Date('Disposition Date')
-    account_id = fields.Many2one('crm.franchise', string='Account')
+    account_id = fields.Many2one('res.partner', string='Account')
     market_id = fields.Many2one('crm.market', string='Market')
     preferred_contact_type_id = fields.Selection([
         ('1', 'Primary Phone'),
@@ -38,3 +38,4 @@ class CrmLead(models.Model):
         ('3', 'SMS'),
         ('4', 'Email')
     ])
+    milestone_id = fields.Many2one('project.milestone', string='Milestone')
