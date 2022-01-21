@@ -5,26 +5,32 @@ class SmartBoard(models.Model):
     _description = "SmartBoard Connector"
 
     def param_check(self, input_dict):
-        res = []
+        valid = True
+        error_dict = {}
+        error = None
         if not input_dict['sb_lead_id']:
-            res = {"status": 400, "error": "Smartboard ID is null", "odoo_customer_id":False}
+            error = "Smartboard ID is null"
         elif not input_dict['x_api_key']:
-            res = {"status": 400, "error": "X API Key is null", "odoo_customer_id": False}
-        elif type(input_dict['sb_lead_id']) != int:
-            res = {"status": 400, "error": "Smartboard ID is not an Integer", "odoo_customer_id": False}
-        elif type(input_dict['x_api_key']) != str:
-            res = {"status": 400, "error": "X API Key is not an Integer", "odoo_customer_id": False}
-        elif input_dict['project_template_id'] and type(input_dict['project_template_id']) == int:
-            res = "is_temp"
-        return res
+            error = "X API Key is null"
+        elif type(input_dict['sb_lead_id']) is not int:
+            error = "Smartboard ID is not an Integer"
+        elif type(input_dict['x_api_key']) is not str:
+            error = "X API Key is not an Integer"
+        elif input_dict['project_template_id'] and type(input_dict['project_template_id']) is not int:
+            error = 'Template ID is not an Integer'
+        if error:
+            valid = False
+            error_dict = {"status": 400, "error": error, "odoo_customer_id": False}
+        return [valid, error_dict]
 
     @api.model
     def create_project(self, sb_lead_id, x_api_key, project_template_id=None):
         try:
             input_dict = {'sb_lead_id' : sb_lead_id, 'x_api_key' : x_api_key, 'project_template_id' : project_template_id}
             # Check input parameters:
-            if self.param_check(input_dict) and self.param_check(input_dict) != "is_temp":
-                return self.param_check(input_dict)
+            res = self.param_check(input_dict)
+            if not res[0]:
+                return res[1]
 
             partner_exist = self.env['res.partner'].search([('sb_lead_id', '=', sb_lead_id)], limit=1)
             lead_exist = self.env['crm.lead'].search([('sb_lead_id', '=', sb_lead_id)], limit=1)
@@ -47,7 +53,7 @@ class SmartBoard(models.Model):
             if not project_exist:
                 project_env = self.env['project.project']
                 # Create new project
-                if self.param_check(input_dict) == 'is_temp':
+                if project_template_id:
                     template = project_env.search([('id', '=', project_template_id), ('name', 'like', ' (TEMPLATE)')])
                     if template:  # Template exists
                         project = template.create_project_from_template(sb_lead_id)
