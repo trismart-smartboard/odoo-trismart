@@ -3,7 +3,7 @@ from odoo import api, fields, models, tools
 class Project(models.Model):
     _inherit = "project.project"
 
-    sb_lead_id = fields.Integer(string='Smartboard Lead ID', readonly=True)
+    sb_lead_id = fields.Integer(string='Smartboard Lead ID')
 
     def create_project_from_template(self, sb_lead_id=None):
         if sb_lead_id:
