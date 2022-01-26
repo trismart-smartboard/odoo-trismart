@@ -8,11 +8,11 @@
     'category': '',
     'version': '15.0.0',
     'depends': [
-                'crm',
-                'project',
-                'project_template',
-                ],
+        'project_template',
+        'trismart_project'
+    ],
     'data': [
+        'data/SmartBoard_update_cron.xml'
     ],
     'demo': [],
     # 'application': False,

@@ -1,0 +1,74 @@
+{
+  "Lead": {
+    "lat": 29.385634,
+    "long": -98.5254159,
+    "created": "2022-01-26 09:10:23",
+    "lead_source": {
+      "id": 12,
+      "name": "Door to Door"
+    },
+    "account_id": {
+      "id": 23,
+      "name": "Demo Franchise 2"
+    },
+    "preferred_contact_type_id": "3",
+    "preferred_language_id": "1"
+  },
+  "Customer": {
+    "first_name": "Coleen",
+    "last_name": "Spjut",
+    "email": "colzsjut45@fakemail.com",
+    "cell_phone": "(568) 123-8365",
+    "home_phone": "",
+    "address": "990 Freeway CIrcle",
+    "address_line_2": "",
+    "city": "San Antonio",
+    "state": "TEXAS",
+    "zip": "78225",
+    "subdivision": ""
+  },
+  "MonthlyUsage": {
+    "jan_consumption": 23.1,
+    "feb_consumption": 22.4,
+    "mar_consumption": 24.1,
+    "apr_consumption": 26.1,
+    "may_consumption": 28.1,
+    "jun_consumption": 29.0,
+    "jul_consumption": 24.5,
+    "aug_consumption": 30.1,
+    "sep_consumption": 23.1,
+    "oct_consumption": 23.4,
+    "nov_consumption": 21.2,
+    "dec_consumption": 23.4,
+    "jan_billing": 231.1,
+    "feb_billing": 213.1,
+    "mar_billing": 230.12,
+    "apr_billing": 245.1,
+    "may_billing": 220.24,
+    "jun_billing": 234.123,
+    "jul_billing": 234.12,
+    "aug_billing": 221.12,
+    "sep_billing": 213.24,
+    "oct_billing": 234.12,
+    "nov_billing": 220.2,
+    "dec_billing": 231.2
+  },
+  "MetricsFinal": {
+    "total_cost": 36000.00,
+    "lease_price_per_kwh": 0.00,
+    "lease_escalator": 0.0029,
+    "finance_term": "",
+    "finance_apr": 0.0399,
+    "down_payment": 0.00
+  },
+  "ModuleArray": [
+    {
+      "qty": 25,
+      "tilt": 28,
+      "azimuth": 270,
+      "max_modules": 0,
+      "solar_access": 100,
+      "year_1_production": 10042
+    }
+  ]
+}

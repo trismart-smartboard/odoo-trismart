@@ -1,8 +1,23 @@
 from odoo import api, fields, models, tools, SUPERUSER_ID
 
+
 class SmartBoard(models.Model):
     _name = "smartboard.connector"
     _description = "SmartBoard Connector"
+
+    @api.model
+    def validate_parameters(self, params):
+        """
+        Validate params from SmartBoard Requests
+        :param params: dictionary of params in data sent from SmartBoard
+        Example: {'sb_lead_id': ...., 'x_api_key': ....., 'project_template_id': .....} for create_project api
+        :return: (True/False, ERROR)
+        """
+        pass
+
+    @api.model
+    def prepare_response(self, code, message, error):
+        return {'code': code, 'message': message, 'error': error}
 
     def param_check(self, input_dict):
         valid = True
@@ -26,7 +41,7 @@ class SmartBoard(models.Model):
     @api.model
     def create_project(self, sb_lead_id, x_api_key, project_template_id=None):
         try:
-            input_dict = {'sb_lead_id' : sb_lead_id, 'x_api_key' : x_api_key, 'project_template_id' : project_template_id}
+            input_dict = {'sb_lead_id': sb_lead_id, 'x_api_key': x_api_key, 'project_template_id': project_template_id}
             # Check input parameters:
             res = self.param_check(input_dict)
             if not res[0]:
@@ -38,7 +53,9 @@ class SmartBoard(models.Model):
 
             if not partner_exist:
                 # Create new partner
-                partner_new = self.env['res.partner'].create({'name': 'SBLead-' + str(sb_lead_id), 'sb_lead_id': sb_lead_id, 'x_api_key': x_api_key, "sync_status" : '1'})
+                partner_new = self.env['res.partner'].create(
+                    {'name': 'SBLead-' + str(sb_lead_id), 'sb_lead_id': sb_lead_id, 'x_api_key': x_api_key,
+                     "sync_status": '1'})
             else:
                 partner_exist.write({'x_api_key': x_api_key})
             partner_record = partner_exist if partner_exist else partner_new
@@ -59,7 +76,8 @@ class SmartBoard(models.Model):
                         project = template.create_project_from_template(sb_lead_id)
                         project_new = project_env.search([('id', '=', project['res_id'])], limit=1)
                     else:
-                        project_new = project_env.create({"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
+                        project_new = project_env.create(
+                            {"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
                 else:
                     project_new = project_env.create({"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
                 # Add partner_id
@@ -70,6 +88,4 @@ class SmartBoard(models.Model):
             else:
                 return {"status": 200, "error": "", "odoo_customer_id": partner_new.id}
         except Exception as e:
-            return {"status": 500,  "error": "Exception occurred. Detail: %s" % e, "odoo_customer_id": False}
-
-
+            return {"status": 500, "error": "Exception occurred. Detail: %s" % e, "odoo_customer_id": False}
