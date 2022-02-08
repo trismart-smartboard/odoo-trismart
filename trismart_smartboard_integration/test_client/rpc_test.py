@@ -11,7 +11,7 @@ server_url = ['localhost', 8071]
 # api_key = '0c5608e57939826227c64338c981070573de0700'
 # server_url = ['https://trismart-staging.odoo.com']
 
-sb_lead_id = 14
+sb_lead_id = 20
 project_template_id = 3
 x_api_key = 'bWFnZ2llOnN1bW1lcnM'
 

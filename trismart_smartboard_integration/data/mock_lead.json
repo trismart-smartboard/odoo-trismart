@@ -15,9 +15,9 @@
     "preferred_language_id": "1"
   },
   "Customer": {
-    "first_name": "Coleen",
-    "last_name": "Spjut",
-    "email": "colzsjut45@fakemail.com",
+    "first_name": "Miley",
+    "last_name": "Cyrus",
+    "email": "miley@cyrus.com",
     "cell_phone": "(568) 123-8365",
     "home_phone": "",
     "address": "990 Freeway CIrcle",
@@ -69,6 +69,14 @@
       "max_modules": 0,
       "solar_access": 100,
       "year_1_production": 10042
+    },
+    {
+      "qty": 12,
+      "tilt": 34.3,
+      "azimuth": 313,
+      "max_modules": 123,
+      "solar_access": 34,
+      "year_1_production": 1234
     }
   ]
 }

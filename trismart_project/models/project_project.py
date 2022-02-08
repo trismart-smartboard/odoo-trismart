@@ -10,7 +10,7 @@ class ProjectProject(models.Model):
     billing_period_one_start_date = fields.Date('Billing Period Start Date')
 
     # Monthly Usage Fields
-    monthly_usages = fields.One2many('monthly.usage', 'project_id', string='Monthly Usage')
+    monthly_usage_ids = fields.One2many('monthly.usage', 'project_id', string='Monthly Usage')
 
     # Metrics Final Fields
     proposal_id = fields.Many2one('documents.document', string='Proposal Id')

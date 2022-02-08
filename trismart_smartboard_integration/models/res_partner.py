@@ -1,5 +1,6 @@
 from odoo import api, fields, models, tools
 from ..utils.endpoint import SmartBoardAPIURL
+from ..utils.extractor import Extractor
 
 
 class Partner(models.Model):
@@ -24,19 +25,19 @@ class Partner(models.Model):
         :return:
         """
         pending_partners = self.search([('sync_status', '=', '1')])
+        extractor = Extractor()
         for partner in pending_partners:
             sb_lead_id = partner.sb_lead_id
-            lead = self.env['crm.lead'].search([('sb_lead_id', '=', sb_lead_id)])
-            project = self.env['project.project'].search([('sb_lead_id', '=', sb_lead_id)])
-            data = partner.fetch_smartboard_project()
+            response_data = partner.fetch_smartboard_project()
             x_api_key = partner.x_api_key
             if not x_api_key:
                 continue
-            lead_data, customer_data, project_data = self.env['smartboard.processor'].process_data(data)
+            extracted_data = extractor.extract_data(response_data)
             try:
-                lead.write(lead_data)
-                project.write(project_data)
-                partner.write(customer_data)
+                for model, data in extracted_data.items():
+                    model_record = self.env[model].search([('sb_lead_id', '=', sb_lead_id)])
+                    ready_data = self.env['smartboard.processor'].parse_data(model, data)
+                    model_record.update(ready_data)
             except Exception as e:
                 print(e)
             else:

@@ -31,7 +31,6 @@ class CrmLead(models.Model):
         ('1', 'English'),
         ('2', 'Spanish')
     ])
-    disposition_date = fields.Date('Disposition Date')
     disposition_id = fields.Many2one('disposition.type', string='Disposition')
     account_id = fields.Many2one('res.partner', string='Account')
     market_id = fields.Many2one('crm.market', string='Market')

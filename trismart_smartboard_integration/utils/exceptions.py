@@ -7,5 +7,6 @@ class SmartBoardError(Exception):
     def __str__(self):
         return repr(self.message)
 
+
 class HTTPError(SmartBoardError):
     """An exception raised when an HTTP request returns with a bad code."""
