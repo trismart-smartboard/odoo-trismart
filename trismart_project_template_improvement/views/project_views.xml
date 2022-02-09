@@ -9,6 +9,6 @@
     </record>
 
     <menuitem id="menu_project_config_project_template" action="action_view_project_template"
-              name="Project Templates 1" sequence="50" parent="project.menu_project_config"/>
+              name="Project Templates" sequence="50" parent="project.menu_project_config"/>
  </odoo>
 
