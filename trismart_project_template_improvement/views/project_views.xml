@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+ <odoo>
+    <record id="action_view_project_template" model="ir.actions.act_window">
+        <field name="name">Project Templates</field>
+        <field name="res_model">project.project</field>
+        <field name="domain">[('is_template', '=', True)]</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_project_config_project_template" action="action_view_project_template"
+              name="Project Templates 1" sequence="50" parent="project.menu_project_config"/>
+ </odoo>
+
