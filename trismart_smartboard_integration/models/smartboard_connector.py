@@ -23,6 +23,18 @@ class SmartBoard(models.Model):
             error_dict = {"status": 400, "error": error, "odoo_customer_id": False}
         return [valid, error_dict]
 
+    def create_non_template_project (self, sb_lead_id):
+        project_env = self.env['project.project']
+        default_template_id = int(self.env['ir.config_parameter'].sudo().get_param(
+            'trismart_project_template_improvement.user_default_project_template')) or False
+        if default_template_id:
+            default_template = project_env.search([('id', '=', default_template_id)])
+            project = default_template.create_project_from_template(sb_lead_id)
+            project_new = project_env.search([('id', '=', project['res_id'])], limit=1)
+        else:
+            project_new = project_env.create({"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
+        return project_new
+
     @api.model
     def create_project(self, sb_lead_id, x_api_key, project_template_id=None):
         try:
@@ -59,9 +71,9 @@ class SmartBoard(models.Model):
                         project = template.create_project_from_template(sb_lead_id)
                         project_new = project_env.search([('id', '=', project['res_id'])], limit=1)
                     else:
-                        project_new = project_env.create({"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
+                        project_new = self.create_non_template_project(sb_lead_id)
                 else:
-                    project_new = project_env.create({"name": 'SBLead-' + str(sb_lead_id), "sb_lead_id": sb_lead_id})
+                    project_new = self.create_non_template_project(sb_lead_id)
                 # Add partner_id
                 project_new.partner_id = partner_record.id
 
