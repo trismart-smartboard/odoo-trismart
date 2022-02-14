@@ -30,7 +30,7 @@ class SmartBoard(models.Model):
         elif type(input_dict['sb_lead_id']) is not int:
             error = "Smartboard ID is not an Integer"
         elif type(input_dict['x_api_key']) is not str:
-            error = "X API Key is not an Integer"
+            error = "X API Key is not a String"
         elif input_dict['project_template_id'] and type(input_dict['project_template_id']) is not int:
             error = 'Template ID is not an Integer'
         if error:
@@ -71,7 +71,7 @@ class SmartBoard(models.Model):
                 project_env = self.env['project.project']
                 # Create new project
                 if project_template_id:
-                    template = project_env.search([('id', '=', project_template_id), ('name', 'like', ' (TEMPLATE)')])
+                    template = project_env.search([('id', '=', project_template_id), ('is_template', '=', True)])
                     if template:  # Template exists
                         project = template.create_project_from_template(sb_lead_id)
                         project_new = project_env.search([('id', '=', project['res_id'])], limit=1)
