@@ -10,6 +10,15 @@ class SmartBoardRequest(models.TransientModel):
     _name = 'smartboard.request'
     _description = 'SmartBoard Request'
 
+    prod_environment = fields.Boolean('Is Production Environment?', default=False)
+    endpoint = fields.Char('SmartBoard Endpoint')
+
+    def get_endpoint(self):
+        if not self.endpoint:
+            return SmartBoardAPIURL.SMARTBOARD_URL_ENDPOINT if self.prod_environment else SmartBoardAPIURL.SMART_BOARD_SANDBOX_URL_ENDPOINT
+        else:
+            return self.endpoint
+
     def smartboard_api_request(self, url, payload):
         """
         Calling SmartBoard API
@@ -17,8 +26,8 @@ class SmartBoardRequest(models.TransientModel):
         :param payload:
         :return:
         """
-        smartboard_endpoint = SmartBoardAPIURL.SMARTBOARD_URL_ENDPOINT
-        api_endpoint = smartboard_endpoint + url
+        smart_board_endpoint = self.get_endpoint()
+        api_endpoint = smart_board_endpoint + url
 
         # Mock data
         response_path = modules.get_module_resource('trismart_smartboard_integration', 'data', 'mock_lead.json')
