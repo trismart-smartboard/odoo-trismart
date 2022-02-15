@@ -3,7 +3,7 @@
     'summary': "RPC to call API for SmartBoard Integration",
     'description': """
         RPC call for SmartBoard Integration through API
-        """,
+    """,
     'author': "Novobi LLC",
     'category': '',
     'version': '15.0.0',
