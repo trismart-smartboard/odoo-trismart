@@ -25,7 +25,7 @@ class SmartBoard(models.Model):
 
     def create_non_template_project (self, sb_lead_id):
         project_env = self.env['project.project']
-        default_template_id = self.company_id.user_default_project_template.id or False
+        default_template_id = self.env.company.user_default_project_template.id or False
         if default_template_id:
             default_template = project_env.search([('id', '=', default_template_id)])
             project = default_template.create_project_from_template(sb_lead_id)
