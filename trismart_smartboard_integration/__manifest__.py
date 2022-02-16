@@ -1,9 +1,9 @@
 {
-    'name': "TRIS API to create customer",
-    'summary': "RPC to call API to create customer",
+    'name': "Novobi SmartBoard Integration",
+    'summary': "RPC to call API for SmartBoard Integration",
     'description': """
-        RPC call to create customer through API
-""",
+        RPC call for SmartBoard Integration through API
+    """,
     'author': "Novobi LLC",
     'category': '',
     'version': '15.0.0',
