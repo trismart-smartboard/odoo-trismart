@@ -5,3 +5,6 @@ access_project_adder,project_adder,model_project_adder,base.group_user,1,1,1,1
 access_project_module_array,project_module_array,model_project_module_array,base.group_user,1,1,1,1
 access_monthly_usage,monthly_usage,model_monthly_usage,base.group_user,1,1,1,1
 access_disposition_type,disposition_type,model_disposition_type,base.group_user,1,1,1,1
+access_preferred_language,preferred_language,model_preferred_language,base.group_user,1,1,1,1
+access_contact_type,contact_type,model_contact_type,base.group_user,1,1,1,1
+access_smartboard_project_milestone,smartboard_project_milestone,model_smartboard_project_milestone,base.group_user,1,1,1,1

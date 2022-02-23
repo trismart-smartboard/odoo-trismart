@@ -7,4 +7,5 @@ from . import res_partner
 from . import crm_market
 from . import utm
 from . import disposition
+from . import project_milestone
 from . import folder
