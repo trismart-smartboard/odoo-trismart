@@ -10,7 +10,8 @@
     'license': 'OPL-1',
     'depends': [
         'project',
-        'crm'
+        'crm',
+        'documents'
     ],
     'data': [
         'security/ir.model.access.csv'

@@ -1,13 +1,13 @@
 # from xmlrpc import client
 import odoorpc
 
-db_name = 'trismart-staging-15-0-3640780'
+db_name = 'Odoo'
 username = 'admin'
-api_key = 'TriSMART2021'
-server_url = ['trismart-staging.odoo.com', 80]
+api_key = 'admin'
+server_url = ['localhost', 8071]
 
-sb_lead_id = 3
-x_api_key = 'sample123456'
+sb_lead_id = 5196644
+x_api_key = '281a27b3f1865a80f6d0acd5fb307cbf'
 project_template_id = 45
 
 odoo = odoorpc.ODOO(server_url[0], port=server_url[1])

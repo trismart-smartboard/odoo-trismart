@@ -4,7 +4,7 @@ from odoo import models, fields, api, _
 class ProjectProject(models.Model):
     _inherit = 'project.project'
     # Energy Usage Fields
-    utility = fields.Many2one('res.partner', 'Utility Company')
+    utility = fields.Char('Utility Company')
     utility_account_number = fields.Char('Utility Account Number')
     authority_having_jurisdiction = fields.Char('AHJ')
     billing_period_one_start_date = fields.Date('Billing Period Start Date')
@@ -13,7 +13,7 @@ class ProjectProject(models.Model):
     monthly_usage_ids = fields.One2many('monthly.usage', 'project_id', string='Monthly Usage')
 
     # Metrics Final Fields
-    proposal_id = fields.Many2one('documents.document', string='Proposal Id')
+    proposal_id = fields.Char('Proposal Id')
     usage_collected = fields.Boolean('Utility Bill Collected (Y/N)')
     hoa_name = fields.Char('HOA Name')
     hoa_phone_email = fields.Char('HOA Email/Phone')

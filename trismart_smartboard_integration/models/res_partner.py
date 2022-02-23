@@ -14,7 +14,7 @@ class Partner(models.Model):
     def fetch_smartboard_project(self):
         self.ensure_one()
         smartboard_request = self.env['smartboard.request']
-        data = {'id': self.sb_lead_id, 'x_api_key': self.x_api_key}
+        data = {'id': self.sb_lead_id}
         response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_LEAD_URL, data, self)
         return response_data
 
@@ -39,6 +39,6 @@ class Partner(models.Model):
                     ready_data = self.env['smartboard.processor'].parse_data(model, data)
                     model_record.update(ready_data)
             except Exception as e:
-                print(e)
+                raise ValueError(e)
             else:
                 return True

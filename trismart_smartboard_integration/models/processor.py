@@ -7,7 +7,6 @@ class SmartBoardProcessor(models.TransientModel):
 
     def parse_data(self, model, data):
         """
-
         :param model:
         :param data:
         :return:
@@ -18,9 +17,14 @@ class SmartBoardProcessor(models.TransientModel):
             parsed_value = value
             field = self.env['ir.model.fields'].search([('model_id', '=', model.id), ('name', '=', field_name)])
             field_type = field.ttype
+            if not field_type:
+                continue
             parse_method = f"parse_{field_type}_data"
             if hasattr(self, parse_method):
-                parsed_value = getattr(self, parse_method)(value, field)
+                try:
+                    parsed_value = getattr(self, parse_method)(value, field)
+                except Exception as e:
+                    print(e)
             ready_values.update({field_name: parsed_value})
         return ready_values
 
@@ -31,7 +35,6 @@ class SmartBoardProcessor(models.TransientModel):
         :param field:
         :return:
         """
-        self.ensure_one()
         return fields.Datetime.from_string(value)
 
     def parse_many2one_data(self, value, field):
@@ -42,9 +45,14 @@ class SmartBoardProcessor(models.TransientModel):
         :return:
         """
         related_model = field.relation
-        record = self.env[related_model].search([('sb_id', '=', value['id'])])
+        if related_model == 'res.country.state':
+            record = self.env[related_model].search([('code', '=', value)])
+            return (record and record[0].id) or None
+        if value['id'] is None:
+            return
+        record = self.env[related_model].search([('sb_id', '=', int(value['id']))])
         if not record:
-            record = self.env[related_model].create({'sb_id': value['id'], 'name': value['name']})
+            record = self.env[related_model].create({'sb_id': int(value['id']), 'name': value['name']})
         return record.id
 
     def parse_one2many_data(self, value, field):
@@ -60,3 +68,9 @@ class SmartBoardProcessor(models.TransientModel):
             new_record = self.env[related_model].create(val)
             records.append(Command.link(new_record.id))
         return records
+
+    def parse_float_data(self, value, field):
+        return (value and float(value)) or 0.0
+
+    def parse_integer_data(self, value, field):
+        return (value and int(value)) or 0

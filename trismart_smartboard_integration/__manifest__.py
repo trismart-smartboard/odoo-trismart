@@ -8,8 +8,8 @@
     'category': '',
     'version': '15.0.0',
     'depends': [
-        'project_template',
-        'trismart_project'
+        'trismart_project',
+        'trismart_project_template_improvement',
     ],
     'data': [
         'data/SmartBoard_update_cron.xml'

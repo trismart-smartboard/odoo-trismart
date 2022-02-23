@@ -1,8 +1,9 @@
-from odoo import models, fields, api, modules
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from ..utils.endpoint import SmartBoardAPIURL
 from ..utils.exceptions import HTTPError
 import requests
+from ..utils.extractor import Extractor
 import json
 
 
@@ -27,28 +28,29 @@ class SmartBoardRequest(models.TransientModel):
         :return:
         """
         smart_board_endpoint = self.get_endpoint()
-        api_endpoint = smart_board_endpoint + url
+        record_id = payload.get('data', False) and payload['data'].get('id', False)
+        api_endpoint = smart_board_endpoint + url + str(record_id)
+        headers = {
+            'x-api-key': payload['x-api-key'],
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        response = requests.get(api_endpoint, headers=headers)
 
-        # Mock data
-        response_path = modules.get_module_resource('trismart_smartboard_integration', 'data', 'mock_lead.json')
-        with open(response_path) as json_file:
-            data = json.load(json_file).copy()
+        # Check the response data
+        if response.status_code not in SmartBoardAPIURL.OK_CODES:
+            message = "received HTTP {0}: {1} when sending to {2}: {3}".format(
+                response.status_code, response.text, api_endpoint, payload
+            )
+            return HTTPError(message)
+
+        # Try to parse the response data
+        try:
+            extractor = Extractor()
+            data = extractor.extract_response_json(response)
             return data
-        # response = requests.post(api_endpoint, data=payload)
-        # # Check the response data
-        # if response.status_code not in SmartBoardAPIURL.OK_CODES:
-        #     message = "received HTTP {0}: {1} when sending to {2}: {3}".format(
-        #         response.status_code, response.text, smartboard_endpoint, payload
-        #     )
-        #     return HTTPError(message)
-        #
-        # # Try to parse the response data
-        # try:
-        #     data = response.json()
-        #     return data
-        #
-        # except Exception as e:
-        #     return e
+        except Exception as e:
+            return e
 
     @api.model
     def api_request(self, endpoint, data, partner):
@@ -64,8 +66,8 @@ class SmartBoardRequest(models.TransientModel):
         if not x_api_key:
             raise UserError(_(f'Missing x_api_key for partner {partner.name}'))
         payload = {
-            "x_api_key": x_api_key,
-            "data": json.dumps(data)
+            "x-api-key": x_api_key,
+            "data": data
         }
 
         # Call the API

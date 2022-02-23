@@ -7,3 +7,19 @@ class DispositionType(models.Model):
 
     sb_id = fields.Integer('SmartBoard Id')
     name = fields.Char('Disposition Type')
+
+
+class SmartBoardLanguage(models.Model):
+    _name = 'preferred.language'
+    _description = 'Preferred Language'
+
+    sb_id = fields.Integer('SmartBoard Id')
+    name = fields.Char('Preferred Language')
+
+
+class SmartBoardContactType(models.Model):
+    _name = 'contact.type'
+    _description = 'Preferred Contact Type'
+
+    sb_id = fields.Integer('SmartBoard Id')
+    name = fields.Char('Preferred Contact Type')

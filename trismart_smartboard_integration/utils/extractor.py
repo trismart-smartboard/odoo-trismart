@@ -1,9 +1,13 @@
+import json
+
+
 class Extractor:
     """
     Helper to extract data from SmartBoard Response
     """
     models_to_extract = ['crm.lead', 'project.project', 'res.partner']
     mapped_field_table = {
+        'id': 'sb_lead_id',
         'cell_phone': 'phone',
         'home_phone': 'mobile',
         'address': 'street',
@@ -11,6 +15,14 @@ class Extractor:
         'state': 'state_id',
         'lead_source': 'source_id'
     }
+
+    def extract_response_json(self, data):
+        content = data.content
+        if isinstance(content, bytes):
+            decoded_data = data.content.decode('utf-8')
+            index_to_get = decoded_data.find('\"Lead\":')
+            content = '{' + decoded_data[index_to_get:]
+        return json.loads(content)
 
     @staticmethod
     def extract_monthly_usage(value):
@@ -26,6 +38,8 @@ class Extractor:
         """
         monthly_usage_ids = []
         for usage, number in value.items():
+            if 'annual_consumption' in usage:
+                continue
             if 'billing' in usage:
                 month = usage.split('_')[0]
                 billing = {'month': month, 'usage_type': 'billing', 'usage_number': number}
@@ -80,11 +94,14 @@ class Extractor:
                 monthly_usage_ids = self.extract_monthly_usage(value)
                 project_data.update({'monthly_usage_ids': monthly_usage_ids})
             if key == 'ModuleArray':
-                project_data.update({'module_array_ids': value})
+                continue
+                # project_data.update({'module_array_ids': value})
             if key == 'Adder':
-                project_data.update({'adder_ids': value})
+                continue
+                # project_data.update({'adder_ids': value})
             if key == 'Incentive':
-                project_data.update({'incentive_ids': value})
+                continue
+                # project_data.update({'incentive_ids': value})
 
         return project_data
 
