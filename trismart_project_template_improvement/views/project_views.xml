@@ -10,5 +10,22 @@
 
     <menuitem id="menu_project_config_project_template" action="action_view_project_template"
               name="Project Templates" sequence="50" parent="project.menu_project_config"/>
+
+    <record id="rearrange_task_tabs_view" model="ir.ui.view">
+        <field name="name">rearrange.task.tabs.view</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='description_page']" position="attributes">
+                <attribute name="string">Task Description</attribute>
+            </xpath>
+            <xpath expr="//page[@name='description_page']" position="before">
+                <xpath expr="//page[@name='task_dependencies']" position="move"/>
+            </xpath>
+            <xpath expr="//page[@name='description_page']" position="before">
+                <xpath expr="//page[@name='sub_tasks_page']" position="move"/>
+            </xpath>
+        </field>
+    </record>
  </odoo>
 
