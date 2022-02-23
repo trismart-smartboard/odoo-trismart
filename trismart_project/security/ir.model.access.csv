@@ -8,3 +8,4 @@ access_disposition_type,disposition_type,model_disposition_type,base.group_user,
 access_preferred_language,preferred_language,model_preferred_language,base.group_user,1,1,1,1
 access_contact_type,contact_type,model_contact_type,base.group_user,1,1,1,1
 access_smartboard_project_milestone,smartboard_project_milestone,model_smartboard_project_milestone,base.group_user,1,1,1,1
+access_documents_subtype,documents_subtype,model_documents_subtype,base.group_user,1,1,1,1

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record model="documents.subtype" id="document_proposal">
+            <field name="name">Proposal</field>
+            <field name="document_type">document</field>
+        </record>
+        <record model="documents.subtype" id="document_contract">
+            <field name="name">Contract</field>
+            <field name="document_type">document</field>
+        </record>
+        <record model="documents.subtype" id="document_design">
+            <field name="name">Design</field>
+            <field name="document_type">document</field>
+        </record>
+        <record model="documents.subtype" id="document_reference">
+            <field name="name">Reference</field>
+            <field name="document_type">document</field>
+        </record>
+
+        <record model="documents.subtype" id="image_electrical_panel_label">
+            <field name="name">Electrical Panel Label</field>
+            <field name="document_type">image</field>
+        </record>
+        <record model="documents.subtype" id="image_meter_location">
+            <field name="name">Meter Location</field>
+            <field name="document_type">image</field>
+        </record>
+        <record model="documents.subtype" id="image_picture_dog">
+            <field name="name">Picture of Dog</field>
+            <field name="document_type">image</field>
+        </record>
+        <record model="documents.subtype" id="image_main_panel">
+            <field name="name">Main Panel</field>
+            <field name="document_type">image</field>
+        </record>
+    </data>
+</odoo>
+

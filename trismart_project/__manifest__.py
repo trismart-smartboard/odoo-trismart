@@ -14,6 +14,7 @@
         'documents'
     ],
     'data': [
+        'data/document_subtype.xml',
         'security/ir.model.access.csv'
     ],
     'installable': True,
