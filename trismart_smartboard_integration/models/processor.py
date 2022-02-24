@@ -65,6 +65,16 @@ class SmartBoardProcessor(models.TransientModel):
         related_model = field.relation
         records = []
         for val in value:
+            for k, v in val.items():
+                #TODO: Less hard code 
+                if k == 'image_subtype':
+                    subtype = self.env['documents.subtype'].search([('name', '=', v)])
+                    val.update({k: (subtype and subtype.id) or False})
+                if k == 'folder_id':
+                    folder = self.env['documents.folder'].search([('name', '=', v)])
+                    val.update({k: (folder and folder.id) or False})
+                if k == 'created':
+                    val.update({k: self.parse_datetime_data(v)})
             new_record = self.env[related_model].create(val)
             records.append(Command.link(new_record.id))
         return records

@@ -1,5 +1,6 @@
 import json
-
+import requests
+import base64
 
 class Extractor:
     """
@@ -13,7 +14,11 @@ class Extractor:
         'address': 'street',
         'address_line_2': 'street2',
         'state': 'state_id',
-        'lead_source': 'source_id'
+        'lead_source': 'source_id',
+        'image_name': 'name',
+        'title': 'image_subtype',
+        'image_url': 'datas',
+        'thumbnail_image_url': 'thumbnail'
     }
 
     def extract_response_json(self, data):
@@ -49,6 +54,24 @@ class Extractor:
                 consumption = {'month': month, 'usage_type': 'consumption', 'usage_number': number}
                 monthly_usage_ids.append(consumption)
         return monthly_usage_ids
+
+    def extract_lead_image_data(self, data):
+        document_datas = []
+        for document in data:
+            document_data = {}
+            for key, value in document.items():
+                if key in self.mapped_field_table:
+                    key = self.mapped_field_table[key]
+                if key in ['datas', 'thumbnail']:
+                    # TODO: Handle api error with image
+                    if not value:
+                        continue
+                    response = requests.get(value)
+                    value = base64.encodebytes(response.content)
+                document_data.update({'folder_id': 'Project/Images'})
+                document_data.update({key: value})
+            document_datas.append(document_data)
+        return document_datas
 
     def extract_data(self, data_object):
         """
@@ -93,6 +116,9 @@ class Extractor:
             if key == 'MonthlyUsage':
                 monthly_usage_ids = self.extract_monthly_usage(value)
                 project_data.update({'monthly_usage_ids': monthly_usage_ids})
+            if key == 'LeadImage':
+                document_ids = self.extract_lead_image_data(value)
+                project_data.update({'document_ids': document_ids})
             if key == 'ModuleArray':
                 continue
                 # project_data.update({'module_array_ids': value})
