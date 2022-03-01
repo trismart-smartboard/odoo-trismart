@@ -1,4 +1,6 @@
 import json
+import requests
+import base64
 
 
 class Extractor:
@@ -50,6 +52,42 @@ class Extractor:
                 monthly_usage_ids.append(consumption)
         return monthly_usage_ids
 
+    def extract_lead_image_data(self, data):
+        document_datas = []
+        for document in data:
+            document_data = {}
+            for key, value in document.items():
+                if key in self.mapped_field_table:
+                    key = self.mapped_field_table[key]
+                if key in ['datas', 'thumbnail']:
+                    # TODO: Handle api error with image
+                    if not value:
+                        continue
+                    response = requests.get(value)
+                    value = base64.encodebytes(response.content)
+                document_data.update({'folder_id': 'Project/Images'})
+                document_data.update({key: value})
+            document_datas.append(document_data)
+        return document_datas
+
+    def extract_document_data(self, data):
+        document_datas = []
+        for key, value in data.items():
+            document_data = {}
+            for d in value:
+                if key in self.mapped_field_table:
+                    key = self.mapped_field_table[key]
+                if key in ['datas', 'thumbnail']:
+                    # TODO: Handle api error with image
+                    if not value:
+                        continue
+                    response = requests.get(value)
+                    value = base64.encodebytes(response.content)
+                document_data.update({'folder_id': 'Project/Images'})
+                document_data.update({key: value})
+            document_datas.append(document_data)
+        return document_datas
+
     def extract_data(self, data_object):
         """
         Extract response from SmartBoard for each type of object
@@ -93,6 +131,11 @@ class Extractor:
             if key == 'MonthlyUsage':
                 monthly_usage_ids = self.extract_monthly_usage(value)
                 project_data.update({'monthly_usage_ids': monthly_usage_ids})
+            if key == 'LeadImage':
+                document_ids = self.extract_lead_image_data(value)
+                project_data.update({'document_ids': document_ids})
+            if key == 'Document':
+                document_ids = self.extract_document_data(value)
             if key == 'ModuleArray':
                 continue
                 # project_data.update({'module_array_ids': value})

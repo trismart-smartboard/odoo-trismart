@@ -16,6 +16,10 @@ class Partner(models.Model):
         smartboard_request = self.env['smartboard.request']
         data = {'id': self.sb_lead_id}
         response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_LEAD_URL, data, self)
+        image_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_IMAGE_URL, data, self)
+        document_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_DOCUMENT_URL, data, self)
+        response_data.update(image_response_data)
+        response_data.update(document_response_data)
         return response_data
 
     @api.model
