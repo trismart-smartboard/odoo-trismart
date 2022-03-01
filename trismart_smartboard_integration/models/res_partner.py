@@ -19,7 +19,7 @@ class Partner(models.Model):
         image_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_IMAGE_URL, data, self)
         document_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_DOCUMENT_URL, data, self)
         response_data.update(image_response_data)
-        response_data.update(document_response_data)
+        # response_data.update(document_response_data)
         return response_data
 
     @api.model

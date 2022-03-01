@@ -3,6 +3,8 @@ from odoo import models, fields, api, _
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
+
+    sb_lead_id = fields.Integer(string='Smartboard Lead ID')
     # Energy Usage Fields
     utility = fields.Char('Utility Company')
     utility_account_number = fields.Char('Utility Account Number')
@@ -37,3 +39,4 @@ class ProjectProject(models.Model):
     module_array_ids = fields.One2many('project.module.array', 'project_id', string='Monthly Array')
     adder_ids = fields.One2many('project.adder', 'project_id', string='Adder')
     incentive_ids = fields.One2many('project.incentive', 'project_id', string='Incentive')
+    document_ids = fields.One2many('documents.document', 'project_id', string='Documents for Project')

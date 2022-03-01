@@ -2,7 +2,6 @@ import json
 import requests
 import base64
 
-
 class Extractor:
     """
     Helper to extract data from SmartBoard Response
@@ -15,7 +14,11 @@ class Extractor:
         'address': 'street',
         'address_line_2': 'street2',
         'state': 'state_id',
-        'lead_source': 'source_id'
+        'lead_source': 'source_id',
+        'image_name': 'name',
+        'title': 'image_subtype',
+        'image_url': 'datas',
+        'thumbnail_image_url': 'thumbnail'
     }
 
     def extract_response_json(self, data):
