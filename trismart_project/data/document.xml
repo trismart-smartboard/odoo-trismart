@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record model="documents.folder" id="project_document_folder">
+            <field name="name">Project/Documents</field>
+        </record>
+        <record model="documents.folder" id="project_image_folder">
+            <field name="name">Project/Images</field>
+        </record>
+    </data>
+</odoo>
+

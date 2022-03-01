@@ -4,3 +4,5 @@ class SmartBoardAPIURL:
     SMART_BOARD_SANDBOX_URL_ENDPOINT = 'https://dev.smartboard.solar'
 
     READ_LEAD_URL = '/apis/get_lead_data?lead_id='
+    READ_IMAGE_URL = '/apis/get_lead_images?lead_id='
+    READ_DOCUMENT_URL = '/apis/get_lead_documents2?lead_id='
