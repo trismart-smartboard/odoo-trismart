@@ -2,6 +2,7 @@ import json
 import requests
 import base64
 
+
 class Extractor:
     """
     Helper to extract data from SmartBoard Response
@@ -16,10 +17,13 @@ class Extractor:
         'state': 'state_id',
         'lead_source': 'source_id',
         'image_name': 'name',
+        'document_name': 'name',
         'title': 'image_subtype',
         'image_url': 'datas',
+        'document_url': 'datas',
         'thumbnail_image_url': 'thumbnail'
     }
+    excluded_fields = ['document_type_id']
 
     def extract_response_json(self, data):
         content = data.content
@@ -75,20 +79,22 @@ class Extractor:
 
     def extract_document_data(self, data):
         document_datas = []
-        for key, value in data.items():
-            document_data = {}
-            for d in value:
-                if key in self.mapped_field_table:
-                    key = self.mapped_field_table[key]
-                if key in ['datas', 'thumbnail']:
-                    # TODO: Handle api error with image
-                    if not value:
+        for document_tab, list_documents in data.items():
+            for d in list_documents:
+                document_data = {'document_subtype': document_tab, 'folder_id': 'Project/Documents'}
+                for key, value in d.items():
+                    if key in self.mapped_field_table:
+                        key = self.mapped_field_table[key]
+                    if key in ['datas', 'thumbnail']:
+                        # TODO: Handle api error with image
+                        if not value:
+                            continue
+                        response = requests.get(value)
+                        value = base64.encodebytes(response.content)
+                    if key in self.excluded_fields:
                         continue
-                    response = requests.get(value)
-                    value = base64.encodebytes(response.content)
-                document_data.update({'folder_id': 'Project/Images'})
-                document_data.update({key: value})
-            document_datas.append(document_data)
+                    document_data.update({key: value})
+                document_datas.append(document_data)
         return document_datas
 
     def extract_data(self, data_object):
@@ -136,9 +142,16 @@ class Extractor:
                 project_data.update({'monthly_usage_ids': monthly_usage_ids})
             if key == 'LeadImage':
                 document_ids = self.extract_lead_image_data(value)
-                project_data.update({'document_ids': document_ids})
+                if project_data.get('document_ids', False):
+                    project_data['document_ids'] += document_ids
+                else:
+                    project_data.update({'document_ids': document_ids})
             if key == 'Document':
                 document_ids = self.extract_document_data(value)
+                if project_data.get('document_ids'):
+                    project_data['document_ids'] += document_ids
+                else:
+                    project_data.update({'document_ids': document_ids})
             if key == 'ModuleArray':
                 continue
                 # project_data.update({'module_array_ids': value})

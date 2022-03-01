@@ -18,8 +18,10 @@ class Partner(models.Model):
         response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_LEAD_URL, data, self)
         image_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_IMAGE_URL, data, self)
         document_response_data = smartboard_request.api_request(SmartBoardAPIURL.READ_DOCUMENT_URL, data, self)
-        response_data.update(image_response_data)
-        # response_data.update(document_response_data)
+        if image_response_data.get('LeadImage'):
+            response_data.update({'LeadImage': image_response_data.get('LeadImage')})
+        if document_response_data.get('Document'):
+            response_data.update({'Document': document_response_data.get('Document')})
         return response_data
 
     @api.model
@@ -44,5 +46,4 @@ class Partner(models.Model):
                     model_record.update(ready_data)
             except Exception as e:
                 raise ValueError(e)
-            else:
-                return True
+        return True

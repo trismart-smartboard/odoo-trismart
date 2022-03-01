@@ -15,7 +15,8 @@ class SmartBoardProcessor(models.TransientModel):
         model = self.env['ir.model'].search([('model', '=', model)])
         for field_name, value in data.items():
             parsed_value = value
-            field = self.env['ir.model.fields'].search([('model_id', '=', model.id), ('name', '=', field_name)])
+            field = self.env['ir.model.fields'].search([('model_id', '=', model.id), ('name', '=', field_name)],
+                                                       limit=1)
             field_type = field.ttype
             if not field_type:
                 continue
@@ -53,11 +54,11 @@ class SmartBoardProcessor(models.TransientModel):
         if isinstance(value, str):
             field_search = self.get_field_search(related_model)
             vals = {field_search: value}
-            record = self.env[related_model].search([(field_search, '=', value)])
+            record = self.env[related_model].search([(field_search, '=', value)], limit=1)
         elif isinstance(value, dict):
             if value.get('id', False):
-                vals = {'sb_id': int(value['id'])}
-                record = self.env[related_model].search([('sb_id', '=', int(value['id']))])
+                vals = value
+                record = self.env[related_model].search([('sb_id', '=', int(value['id']))], limit=1)
             else:
                 return
         if not record:
@@ -71,33 +72,29 @@ class SmartBoardProcessor(models.TransientModel):
         :param field:
         :return:
         """
-        related_model = self.env['ir.model'].search([('model', '=', field.relation)])
+        related_model = self.env['ir.model'].search([('model', '=', field.relation)], limit=1)
         records = []
         for val in value:
+            domain = []
             for field_name, field_value in val.items():
                 parsed_value = None
                 _field = self.env['ir.model.fields'].search(
-                    [('model_id', '=', related_model.id), ('name', '=', field_name)])
+                    [('model_id', '=', related_model.id), ('name', '=', field_name)], limit=1)
                 field_type = _field.ttype
                 if not field_type:
                     continue
                 parse_method = f"parse_{field_type}_data"
                 if hasattr(self, parse_method):
                     parsed_value = getattr(self, parse_method)(field_value, _field)
+                if _field.store:
+                    domain.append((field_name, '=', parsed_value or field_value))
                 val.update({field_name: parsed_value or field_value})
-                # ready_values.update({field_name: parsed_value})
-                # # TODO: Less hard code
-                #
-                # if k == 'image_subtype':
-                #     subtype = self.env['documents.subtype'].search([('name', '=', v)])
-                #     val.update({k: (subtype and subtype.id) or False})
-                # if k == 'folder_id':
-                #     folder = self.env['documents.folder'].search([('name', '=', v)])
-                #     val.update({k: (folder and folder.id) or False})
-                # if k == 'created':
-                #     val.update({k: self.parse_datetime_data(v)})
-            new_record = self.env[field.relation].create(val)
-            records.append(Command.link(new_record.id))
+            record = self.env[field.relation].search(domain, limit=1)
+            if record:
+                records.append(Command.update(record.id, val))
+            else:
+                new_record = self.env[field.relation].create(val)
+                records.append(Command.link(new_record.id))
         return records
 
     def parse_float_data(self, value, field):
