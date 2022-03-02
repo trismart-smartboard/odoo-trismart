@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+ <odoo>
+    <record id="industry_fsm.project_project_action_only_fsm" model="ir.actions.act_window">
+        <field name="domain">[]</field>
+    </record>
+
+    <record id="industry_fsm.project_task_action_fsm" model="ir.actions.act_window">
+        <field name="domain">[('is_fsm_task', '=', True),('display_project_id', '!=', False)]</field>
+    </record>
+ </odoo>
